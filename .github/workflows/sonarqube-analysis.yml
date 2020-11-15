@@ -28,7 +28,7 @@ jobs:
         sonarOrganization: qatoolkit
         dotnetBuildArguments: ./src/QAToolKit.Engine.HttpTester/QAToolKit.Engine.HttpTester.csproj
         dotnetTestArguments: ./src/QAToolKit.Engine.HttpTester.Test/QAToolKit.Engine.HttpTester.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-        sonarBeginArguments: /d:sonar.verbose="true" /d:sonar.language="cs" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" /d:sonar.coverage.exclusions="**Tests.cs"
+        sonarBeginArguments: /d:sonar.verbose="true" /d:sonar.language="cs" /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml"
         sonarHostname: "https://sonarcloud.io"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
