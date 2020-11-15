@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30611.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QAToolKit.Engine.HttpTester", "src\QAToolKit.Engine.HttpTester\QAToolKit.Engine.HttpTester.csproj", "{23F0CF6E-9A0A-4BE5-8F51-51DAF799A0BF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QAToolKit.Engine.HttpTester.Test", "src\QAToolKit.Engine.HttpTester.Test\QAToolKit.Engine.HttpTester.Test.csproj", "{498C4732-3E61-4790-935C-9618922B4098}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug With Project References|Any CPU = Debug With Project References|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{23F0CF6E-9A0A-4BE5-8F51-51DAF799A0BF}.Debug With Project References|Any CPU.ActiveCfg = Debug With Project References|Any CPU
+		{23F0CF6E-9A0A-4BE5-8F51-51DAF799A0BF}.Debug With Project References|Any CPU.Build.0 = Debug With Project References|Any CPU
+		{23F0CF6E-9A0A-4BE5-8F51-51DAF799A0BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23F0CF6E-9A0A-4BE5-8F51-51DAF799A0BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23F0CF6E-9A0A-4BE5-8F51-51DAF799A0BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23F0CF6E-9A0A-4BE5-8F51-51DAF799A0BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{498C4732-3E61-4790-935C-9618922B4098}.Debug With Project References|Any CPU.ActiveCfg = Debug|Any CPU
+		{498C4732-3E61-4790-935C-9618922B4098}.Debug With Project References|Any CPU.Build.0 = Debug|Any CPU
+		{498C4732-3E61-4790-935C-9618922B4098}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{498C4732-3E61-4790-935C-9618922B4098}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{498C4732-3E61-4790-935C-9618922B4098}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{498C4732-3E61-4790-935C-9618922B4098}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B42B0A7B-521A-4A13-8C2F-FE233F07519C}
+	EndGlobalSection
+EndGlobal
