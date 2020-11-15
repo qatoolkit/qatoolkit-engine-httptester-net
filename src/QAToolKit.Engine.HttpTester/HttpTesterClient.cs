@@ -171,7 +171,25 @@ namespace QAToolKit.Engine.HttpTester
         /// </summary>
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Dispose object
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
             HttpClient?.Dispose();
+        }
+
+        /// <summary>
+        /// Destructor
+        /// </summary>
+        ~HttpTesterClient()
+        {
+            Dispose(false);
         }
     }
 }
