@@ -1,5 +1,5 @@
 # QAToolKit Engine HttpTester library
-![https://github.com/qatoolkit/qatoolkit-engine-httptester-net/actions](https://github.com/qatoolkit/qatoolkit-engine-httptester-net/workflows/.NET%20Core/badge.svg?branch=main)
+![https://github.com/qatoolkit/qatoolkit-engine-httptester-net/actions](![Build .NET Library](https://github.com/qatoolkit/qatoolkit-engine-httptester-net/workflows/Build%20.NET%20Library/badge.svg))
 ![https://github.com/qatoolkit/qatoolkit-engine-httptester-net/security/code-scanning](https://github.com/qatoolkit/qatoolkit-engine-httptester-net/workflows/CodeQL%20Analyze/badge.svg)
 ![https://sonarcloud.io/dashboard?id=qatoolkit_qatoolkit-engine-httptester-net](https://github.com/qatoolkit/qatoolkit-engine-httptester-net/workflows/Sonarqube%20Analyze/badge.svg)
 ![https://www.nuget.org/packages/QAToolKit.Engine.HttpTester/](https://img.shields.io/nuget/v/QAToolKit.Engine.HttpTester?label=QAToolKit.Engine.HttpTester)
