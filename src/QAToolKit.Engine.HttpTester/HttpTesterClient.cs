@@ -25,24 +25,57 @@ namespace QAToolKit.Engine.HttpTester
         private HttpMethod _httpMethod;
         private Dictionary<string, string> _queryParameters = null;
         private HttpResponseMessage _responseMessage = null;
+
         /// <summary>
         /// Measured HTTP request duration
         /// </summary>
         public long Duration { get; private set; }
 
         /// <summary>
-        /// Create HTTP request client
+        /// Create HTTP request client with or without certificate validation
         /// </summary>
-        /// <param name="baseAddress"></param>
+        /// <param name="baseAddress">Base address of the API, can be http or https.</param>
+        /// <param name="validateCertificate">Validate certificate, default is true and it's ignored if http is used.</param>
         /// <returns></returns>
-        public IHttpTesterClient CreateHttpRequest(Uri baseAddress)
+        public IHttpTesterClient CreateHttpRequest(Uri baseAddress, bool validateCertificate = true)
         {
-            HttpClient = new HttpClient
+            if (!validateCertificate &&
+                (baseAddress.Scheme == Uri.UriSchemeHttp || baseAddress.Scheme == Uri.UriSchemeHttps))
+            {
+                NonValidatingClient(baseAddress);
+            }
+            else
+            {
+                ValidatingClient(baseAddress);
+            }
+
+            return this;
+        }
+
+        private void ValidatingClient(Uri baseAddress)
+        {
+            HttpClient = new HttpClient()
             {
                 BaseAddress = baseAddress
             };
+        }
 
-            return this;
+        private void NonValidatingClient(Uri baseAddress)
+        {
+            var handler = new HttpClientHandler
+            {
+                ClientCertificateOptions = ClientCertificateOption.Manual,
+                ServerCertificateCustomValidationCallback =
+                (httpRequestMessage, cert, cetChain, policyErrors) =>
+                {
+                    return true;
+                }
+            };
+
+            HttpClient = new HttpClient(handler)
+            {
+                BaseAddress = baseAddress
+            };
         }
 
         /// <summary>
