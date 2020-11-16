@@ -14,8 +14,9 @@ namespace QAToolKit.Engine.HttpTester
         /// Create HTTP request client
         /// </summary>
         /// <param name="baseAddress"></param>
+        /// <param name="validateCertificate"></param>
         /// <returns></returns>
-        IHttpTesterClient CreateHttpRequest(Uri baseAddress);
+        IHttpTesterClient CreateHttpRequest(Uri baseAddress, bool validateCertificate);
         /// <summary>
         /// Add URL path to the HTTP client
         /// </summary>

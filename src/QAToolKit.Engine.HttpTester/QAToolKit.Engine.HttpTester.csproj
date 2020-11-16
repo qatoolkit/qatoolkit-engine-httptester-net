@@ -16,11 +16,11 @@
 		</Description>
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<PackageProjectUrl>https://github.com/qatoolkit/qatoolkit-core-net</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/qatoolkit/qatoolkit-engine-httptester-net</PackageProjectUrl>
 		<PackageIcon>qatoolkit-64x64.png</PackageIcon>
 		<RepositoryUrl>https://github.com/qatoolkit/qatoolkit-core-net</RepositoryUrl>
-		<PackageTags>qatoolkit-core-net;.net;c#;f#;dotnet;netstandard;net5</PackageTags>
-		<Configurations>Debug;Release;Debug With Project References</Configurations>
+		<PackageTags>qatoolkit-engine-httptester-net;.net;c#;f#;dotnet;netstandard;net5</PackageTags>
+		<Configurations>Debug;Release</Configurations>
 	</PropertyGroup>
 	
 	<PropertyGroup>
