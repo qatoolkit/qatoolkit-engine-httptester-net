@@ -12,6 +12,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 using ExpectedObjects;
+using System.Security.Authentication;
 
 namespace QAToolKit.Engine.HttpTester.Test
 {
@@ -214,6 +215,90 @@ namespace QAToolKit.Engine.HttpTester.Test
             using (var client = new HttpTesterClient())
             {
                 await Assert.ThrowsAsync<QAToolKitEngineHttpTesterException>(async () => await client.Start());
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterClientGetWithBodyDisableSSLValidationWithValidCert_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                var response = await client
+                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"), false)
+                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                 .WithMethod(HttpMethod.Get)
+                 .WithPath("/api/bicycles/1")
+                 .Start();
+
+                var msg = await response.GetResponseBody<Bicycle>();
+
+                var expecterResponse = BicycleFixture.GetFoil().ToExpectedObject();
+                expecterResponse.ShouldEqual(msg);
+
+                Assert.True(client.Duration < 2000);
+                Assert.True(response.IsSuccessStatusCode);
+                Assert.Equal("Scott", msg.Brand);
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterClientGetWithBodyDisableSSLValidationWithInvalidCert_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                var response = await client
+                 .CreateHttpRequest(new Uri("https://swagger-demo.qatoolkit.io/"), false)
+                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                 .WithMethod(HttpMethod.Get)
+                 .WithPath("/api/bicycles/1")
+                 .Start();
+
+                var msg = await response.GetResponseBody<Bicycle>();
+
+                var expecterResponse = BicycleFixture.GetFoil().ToExpectedObject();
+                expecterResponse.ShouldEqual(msg);
+
+                Assert.True(client.Duration < 2000);
+                Assert.True(response.IsSuccessStatusCode);
+                Assert.Equal("Scott", msg.Brand);
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterClientGetWithBodyDisableSSLValidationWithHttpUrl_Exception()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                var response = await client
+                 .CreateHttpRequest(new Uri("http://swagger-demo.qatoolkit.io/"), false)
+                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                 .WithMethod(HttpMethod.Get)
+                 .WithPath("/api/bicycles/1")
+                 .Start();
+
+                var msg = await response.GetResponseBody<Bicycle>();
+
+                var expecterResponse = BicycleFixture.GetFoil().ToExpectedObject();
+                expecterResponse.ShouldEqual(msg);
+
+                Assert.True(client.Duration < 2000);
+                Assert.True(response.IsSuccessStatusCode);
+                Assert.Equal("Scott", msg.Brand);
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterClientGetWithBodyDisableSSLValidationWithInvalidCertAndUrl2_Exception()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                var response = client
+                 .CreateHttpRequest(new Uri("http://swagger-demo.qatoolkit.io/"), true)
+                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                 .WithMethod(HttpMethod.Get)
+                 .WithPath("/api/bicycles/1");
+
+                 await Assert.ThrowsAsync<HttpRequestException>(async () => await client.Start());
             }
         }
     }
