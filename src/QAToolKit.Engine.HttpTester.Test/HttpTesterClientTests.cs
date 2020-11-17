@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 using Xunit;
 using ExpectedObjects;
 using System.Security.Authentication;
+using Newtonsoft.Json.Linq;
+using System.Dynamic;
 
 namespace QAToolKit.Engine.HttpTester.Test
 {
@@ -299,6 +301,27 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithPath("/api/bicycles/1");
 
                  await Assert.ThrowsAsync<HttpRequestException>(async () => await client.Start());
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterClientReturnDynamic_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                var response = await client
+                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                 .WithMethod(HttpMethod.Post)
+                 .WithJsonBody(BicycleFixture.GetCfr())
+                 .WithPath("/api/bicycles")
+                 .Start();
+
+                var msg = await response.GetResponseBody<dynamic>();
+
+                Assert.True(client.Duration < 2000);
+                Assert.True(response.IsSuccessStatusCode);
+                Assert.Equal("Giant", msg.brand.ToString());
             }
         }
     }
