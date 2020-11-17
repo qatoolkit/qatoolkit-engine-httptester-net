@@ -216,13 +216,5 @@ namespace QAToolKit.Engine.HttpTester
         {
             HttpClient?.Dispose();
         }
-
-        /// <summary>
-        /// Destructor
-        /// </summary>
-        ~HttpTesterClient()
-        {
-            Dispose(false);
-        }
     }
 }
