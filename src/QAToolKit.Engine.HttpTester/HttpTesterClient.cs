@@ -14,7 +14,6 @@ namespace QAToolKit.Engine.HttpTester
     /// </summary>
     public class HttpTesterClient : IHttpTesterClient, IDisposable
     {
-
         /// <summary>
         /// HttpClient object
         /// </summary>
@@ -105,12 +104,24 @@ namespace QAToolKit.Engine.HttpTester
         /// <summary>
         /// Add JSON body to the HTTP client
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="bodyObject"></param>
+        /// <typeparam name="T">Type of DTO object</typeparam>
+        /// <param name="bodyObject">DTO object that needs to be serialized to JSON</param>
         /// <returns></returns>
         public IHttpTesterClient WithJsonBody<T>(T bodyObject)
         {
-            _body = JsonConvert.SerializeObject(bodyObject);
+            if (bodyObject == null)
+            {
+                return this;
+            }
+
+            if (typeof(T) == typeof(String))
+            {
+                _body = bodyObject.ToString();
+            }
+            else
+            {
+                _body = JsonConvert.SerializeObject(bodyObject);
+            }
 
             return this;
         }
@@ -160,22 +171,20 @@ namespace QAToolKit.Engine.HttpTester
                 throw new QAToolKitEngineHttpTesterException("'Get' method can not have a HTTP body.");
             }
 
-            //Process params
+            string queryString = "";
             if (_queryParameters != null)
             {
-                var queryString = "?";
+                queryString = "?";
 
                 foreach (var query in _queryParameters)
                 {
                     queryString += $"{query.Key}={query.Value}";
                 }
-
-                _path += queryString;
             }
 
             var sw = new Stopwatch();
             sw.Start();
-            using (var requestMessage = new HttpRequestMessage(_httpMethod, _path))
+            using (var requestMessage = new HttpRequestMessage(_httpMethod, _path + queryString))
             {
                 if (_headers != null)
                 {
@@ -215,14 +224,6 @@ namespace QAToolKit.Engine.HttpTester
         protected virtual void Dispose(bool disposing)
         {
             HttpClient?.Dispose();
-        }
-
-        /// <summary>
-        /// Destructor
-        /// </summary>
-        ~HttpTesterClient()
-        {
-            Dispose(false);
         }
     }
 }

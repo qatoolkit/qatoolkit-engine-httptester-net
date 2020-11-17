@@ -1,8 +1,5 @@
 ﻿using QAToolKit.Core.HttpRequestTools;
 using QAToolKit.Core.Models;
-using QAToolKit.Engine.HttpTester.Exceptions;
-using QAToolKit.Engine.HttpTester.Extensions;
-using QAToolKit.Engine.HttpTester.Test.Fixtures;
 using QAToolKit.Source.Swagger;
 using System;
 using System.Collections.Generic;
@@ -12,7 +9,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 using ExpectedObjects;
-using System.Security.Authentication;
+using QAToolKit.Engine.HttpTester.Extensions;
+using QAToolKit.Engine.HttpTester.Test.Fixtures;
+using QAToolKit.Engine.HttpTester.Exceptions;
 
 namespace QAToolKit.Engine.HttpTester.Test
 {
@@ -299,6 +298,65 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithPath("/api/bicycles/1");
 
                  await Assert.ThrowsAsync<HttpRequestException>(async () => await client.Start());
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterClientReturnDynamic_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                var response = await client
+                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                 .WithMethod(HttpMethod.Post)
+                 .WithJsonBody(BicycleFixture.GetCfr())
+                 .WithPath("/api/bicycles")
+                 .Start();
+
+                var msg = await response.GetResponseBody<dynamic>();
+
+                Assert.True(client.Duration < 2000);
+                Assert.True(response.IsSuccessStatusCode);
+                Assert.Equal("Giant", msg.brand.ToString());
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterClientPostStringBodyWithFulUrl_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                var response = await client
+                   .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
+                   .WithJsonBody("{\"id\": 5,\"name\":\"EXCEED CFR\",\"brand\":\"Giant\",\"type\":2}")
+                   .WithMethod(HttpMethod.Post)
+                   .Start();
+
+                var msg = await response.Content.ReadAsStringAsync();
+
+                Assert.True(client.Duration < 2000);
+                Assert.True(response.IsSuccessStatusCode);
+                //Assert.Equal("Giant", msg.brand.ToString());
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterClientPostObjectBodyWithFulUrl_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                var response = await client
+                   .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
+                   .WithJsonBody(BicycleFixture.GetCfr())
+                   .WithMethod(HttpMethod.Post)
+                   .Start();
+
+                var msg = await response.GetResponseBody<dynamic>();
+
+                Assert.True(client.Duration < 2000);
+                Assert.True(response.IsSuccessStatusCode);
+                Assert.Equal("Giant", msg.brand.ToString());
             }
         }
     }
