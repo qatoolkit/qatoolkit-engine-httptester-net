@@ -1,4 +1,5 @@
-﻿using QAToolKit.Core.HttpRequestTools;
+﻿using ExpectedObjects;
+using QAToolKit.Core.HttpRequestTools;
 using QAToolKit.Core.Models;
 using QAToolKit.Source.Swagger;
 using System;
@@ -8,10 +9,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
-using ExpectedObjects;
-using QAToolKit.Engine.HttpTester.Extensions;
-using QAToolKit.Engine.HttpTester.Test.Fixtures;
-using QAToolKit.Engine.HttpTester.Exceptions;
 
 namespace QAToolKit.Engine.HttpTester.Test
 {
@@ -297,7 +294,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithMethod(HttpMethod.Get)
                  .WithPath("/api/bicycles/1");
 
-                 await Assert.ThrowsAsync<HttpRequestException>(async () => await client.Start());
+                await Assert.ThrowsAsync<HttpRequestException>(async () => await client.Start());
             }
         }
 
@@ -355,6 +352,48 @@ namespace QAToolKit.Engine.HttpTester.Test
                 var msg = await response.GetResponseBody<dynamic>();
 
                 Assert.True(client.Duration < 2000);
+                Assert.True(response.IsSuccessStatusCode);
+                Assert.Equal("Giant", msg.brand.ToString());
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterClientPostObjectBodyWithFulUrlWithBasicAuthorization_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                var response = await client
+                   .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
+                   .WithJsonBody(BicycleFixture.GetCfr())
+                   .WithMethod(HttpMethod.Post)
+                   .WithBasicAuthentication("user", "pass")
+                   .Start();
+
+                var msg = await response.GetResponseBody<dynamic>();
+
+                Assert.True(client.Duration < 2000);
+                Assert.True(client.HttpClient.DefaultRequestHeaders.Contains("Authorization"));
+                Assert.True(response.IsSuccessStatusCode);
+                Assert.Equal("Giant", msg.brand.ToString());
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterClientPostObjectBodyWithFulUrlWithBearerAuthorization_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                var response = await client
+                   .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
+                   .WithJsonBody(BicycleFixture.GetCfr())
+                   .WithMethod(HttpMethod.Post)
+                   .WithBearerAuthentication("123")
+                   .Start();
+
+                var msg = await response.GetResponseBody<dynamic>();
+
+                Assert.True(client.Duration < 2000);
+                Assert.True(client.HttpClient.DefaultRequestHeaders.Contains("Authorization"));
                 Assert.True(response.IsSuccessStatusCode);
                 Assert.Equal("Giant", msg.brand.ToString());
             }

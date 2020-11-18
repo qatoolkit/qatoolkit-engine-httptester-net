@@ -22,6 +22,7 @@ using (var client = new HttpTesterClient())
         .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
         .WithMethod(HttpMethod.Get)
         .WithPath("/api/bicycles")
+        .WithBearerAuthentication("eXy....")
         .Start();
 
     var msg = await response.GetResponseBody<List<Bicycle>>();
@@ -54,6 +55,7 @@ using (var client = new HttpTesterClient())
         .WithMethod(HttpMethod.Post)
         .WithJsonBody(bicycle)
         .WithPath("/api/bicycles")
+        .WithBasicAuthentication("user", "pass")
         .Start();
 
     var msg = await response.GetResponseBody<Bicycle>();
@@ -64,6 +66,65 @@ using (var client = new HttpTesterClient())
     Assert.True(client.Duration < 2000);
     Assert.True(response.IsSuccessStatusCode);
     Assert.Equal("Giant", msg.Brand);
+}
+```
+
+### HttpTestAsserter
+
+This is an implementation of the HTTP response message asserter, which can be used to assert different paramters.
+
+Asserter produces a list of `AssertResult`:
+
+```csharp
+    /// <summary>
+    /// Assert result object
+    /// </summary>
+    public class AssertResult
+    {
+        /// <summary>
+        /// Assert name
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// Is assert true
+        /// </summary>
+        public bool IsTrue { get; set; }
+        /// <summary>
+        /// Assert message
+        /// </summary>
+        public string Message { get; set; }
+    }
+```
+
+If we extend the previous example:
+
+```csharp
+using (var client = new HttpTesterClient())
+{
+    var response = await client
+        .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+        .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+        .WithMethod(HttpMethod.Get)
+        .WithPath("/api/bicycles")
+        .Start();
+
+    var duration = client.Duration;
+
+    //pass response to the asserter
+    var asserter = new HttpTestAsserter(response);
+
+    //Produce the list of assert results
+    var assertResults = asserter
+        .ResponseContentContains("scott")
+        .RequestDurationEquals(duration, (x) => x < 1000)
+        .ResponseStatusCodeEquals(HttpStatusCode.OK)
+        .AssertAll();
+
+    //if you use xUnit, you can assert the results like this
+    foreach (var result in assertResults)
+    {
+        Assert.True(result.IsTrue, result.Message);
+    }
 }
 ```
 

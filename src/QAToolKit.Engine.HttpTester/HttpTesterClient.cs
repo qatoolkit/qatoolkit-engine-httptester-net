@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
 using QAToolKit.Engine.HttpTester.Exceptions;
+using QAToolKit.Engine.HttpTester.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,7 +19,7 @@ namespace QAToolKit.Engine.HttpTester
         /// <summary>
         /// HttpClient object
         /// </summary>
-        public HttpClient HttpClient { get; set; }
+        public HttpClient HttpClient { get; private set; }
         private string _path = null;
         private Dictionary<string, string> _headers = null;
         private string _body = null;
@@ -146,6 +148,33 @@ namespace QAToolKit.Engine.HttpTester
         public IHttpTesterClient WithQueryParams(Dictionary<string, string> queryParameters)
         {
             _queryParameters = queryParameters;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Use basic authentication
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public IHttpTesterClient WithBasicAuthentication(string userName, string password)
+        {
+            var authenticationString = $"{userName}:{password}";
+            var base64EncodedAuthenticationString = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes(authenticationString));
+            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Use bearer token authentication
+        /// </summary>
+        /// <param name="accessToken"></param>
+        /// <returns></returns>
+        public IHttpTesterClient WithBearerAuthentication(string accessToken)
+        {
+            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
             return this;
         }
