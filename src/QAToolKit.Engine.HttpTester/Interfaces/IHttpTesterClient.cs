@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace QAToolKit.Engine.HttpTester
+namespace QAToolKit.Engine.HttpTester.Interfaces
 {
     /// <summary>
     /// Interface of HTTP tester client
@@ -48,6 +48,19 @@ namespace QAToolKit.Engine.HttpTester
         /// <param name="queryParameters"></param>
         /// <returns></returns>
         IHttpTesterClient WithQueryParams(Dictionary<string, string> queryParameters);
+        /// <summary>
+        /// Use basic authentication
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        IHttpTesterClient WithBasicAuthentication(string userName, string password);
+        /// <summary>
+        /// Bearer token authentication
+        /// </summary>
+        /// <param name="accessToken"></param>
+        /// <returns></returns>
+        IHttpTesterClient WithBearerAuthentication(string accessToken);
         /// <summary>
         /// Start the HTTP request
         /// </summary>
