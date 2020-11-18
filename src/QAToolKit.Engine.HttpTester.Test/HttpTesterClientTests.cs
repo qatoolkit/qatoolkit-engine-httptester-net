@@ -1,6 +1,9 @@
 ﻿using ExpectedObjects;
 using QAToolKit.Core.HttpRequestTools;
 using QAToolKit.Core.Models;
+using QAToolKit.Engine.HttpTester.Exceptions;
+using QAToolKit.Engine.HttpTester.Extensions;
+using QAToolKit.Engine.HttpTester.Test.Fixtures;
 using QAToolKit.Source.Swagger;
 using System;
 using System.Collections.Generic;
