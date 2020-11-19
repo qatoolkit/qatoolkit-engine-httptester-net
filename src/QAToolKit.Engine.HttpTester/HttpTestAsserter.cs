@@ -22,7 +22,7 @@ namespace QAToolKit.Engine.HttpTester
         /// <param name="httpResponseMessage"></param>
         public HttpTestAsserter(HttpResponseMessage httpResponseMessage)
         {
-            _httpResponseMessage = httpResponseMessage;
+            _httpResponseMessage = httpResponseMessage ?? throw new ArgumentNullException($"{nameof(httpResponseMessage)} is null.");
             _assertResults = new List<AssertResult>();
         }
 
