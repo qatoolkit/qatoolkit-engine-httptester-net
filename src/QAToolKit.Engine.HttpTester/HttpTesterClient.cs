@@ -4,6 +4,7 @@ using QAToolKit.Engine.HttpTester.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -20,6 +21,7 @@ namespace QAToolKit.Engine.HttpTester
         /// HttpClient object
         /// </summary>
         public HttpClient HttpClient { get; private set; }
+        private HttpClientHandler HttpHandler { get; set; }
         private string _path = null;
         private Dictionary<string, string> _headers = null;
         private string _body = null;
@@ -40,43 +42,25 @@ namespace QAToolKit.Engine.HttpTester
         /// <returns></returns>
         public IHttpTesterClient CreateHttpRequest(Uri baseAddress, bool validateCertificate = true)
         {
+            HttpHandler = new HttpClientHandler();
+
             if (!validateCertificate &&
                 (baseAddress.Scheme == Uri.UriSchemeHttp || baseAddress.Scheme == Uri.UriSchemeHttps))
             {
-                NonValidatingClient(baseAddress);
-            }
-            else
-            {
-                ValidatingClient(baseAddress);
-            }
-
-            return this;
-        }
-
-        private void ValidatingClient(Uri baseAddress)
-        {
-            HttpClient = new HttpClient()
-            {
-                BaseAddress = baseAddress
-            };
-        }
-
-        private void NonValidatingClient(Uri baseAddress)
-        {
-            var handler = new HttpClientHandler
-            {
-                ClientCertificateOptions = ClientCertificateOption.Manual,
-                ServerCertificateCustomValidationCallback =
+                HttpHandler.ClientCertificateOptions = ClientCertificateOption.Manual;
+                HttpHandler.ServerCertificateCustomValidationCallback =
                 (httpRequestMessage, cert, cetChain, policyErrors) =>
                 {
                     return true;
-                }
-            };
+                };
+            }
 
-            HttpClient = new HttpClient(handler)
+            HttpClient = new HttpClient(HttpHandler)
             {
                 BaseAddress = baseAddress
             };
+
+            return this;
         }
 
         /// <summary>
@@ -180,6 +164,40 @@ namespace QAToolKit.Engine.HttpTester
         }
 
         /// <summary>
+        /// Use NTLM authentication
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public IHttpTesterClient WithNTLMAuthentication(string userName, string password)
+        {
+            if (string.IsNullOrEmpty(userName))
+                throw new ArgumentNullException($"{nameof(userName)} is null.");
+            if (string.IsNullOrEmpty(password))
+                throw new ArgumentNullException($"{nameof(password)} is null.");
+
+            var credentials = new NetworkCredential(userName, password);
+
+            var credentialsCache = new CredentialCache { { HttpClient.BaseAddress, "NTLM", credentials } };
+            HttpHandler.Credentials = credentialsCache;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Use NTLM authentication which represents the authentication credentials for the current security context in which the application is running.
+        /// </summary>
+        /// <returns></returns>
+        public IHttpTesterClient WithNTLMAuthentication()
+        {
+            var credentials = CredentialCache.DefaultNetworkCredentials;
+            var credentialsCache = new CredentialCache { { HttpClient.BaseAddress, "NTLM", credentials } };
+            HttpHandler.Credentials = credentialsCache;
+
+            return this;
+        }
+
+        /// <summary>
         /// Start the HTTP request
         /// </summary>
         /// <returns></returns>
@@ -253,6 +271,7 @@ namespace QAToolKit.Engine.HttpTester
         protected virtual void Dispose(bool disposing)
         {
             HttpClient?.Dispose();
+            HttpHandler?.Dispose();
         }
     }
 }

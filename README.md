@@ -1,8 +1,8 @@
 # QAToolKit Engine HttpTester library
-![https://github.com/qatoolkit/qatoolkit-engine-httptester-net/actions](![Build .NET Library](https://github.com/qatoolkit/qatoolkit-engine-httptester-net/workflows/Build%20.NET%20Library/badge.svg))
-![https://github.com/qatoolkit/qatoolkit-engine-httptester-net/security/code-scanning](https://github.com/qatoolkit/qatoolkit-engine-httptester-net/workflows/CodeQL%20Analyze/badge.svg)
-![https://sonarcloud.io/dashboard?id=qatoolkit_qatoolkit-engine-httptester-net](https://github.com/qatoolkit/qatoolkit-engine-httptester-net/workflows/Sonarqube%20Analyze/badge.svg)
-![https://www.nuget.org/packages/QAToolKit.Engine.HttpTester/](https://img.shields.io/nuget/v/QAToolKit.Engine.HttpTester?label=QAToolKit.Engine.HttpTester)
+[![Build .NET Library](https://github.com/qatoolkit/qatoolkit-engine-httptester-net/workflows/Build%20.NET%20Library/badge.svg)](https://github.com/qatoolkit/qatoolkit-engine-httptester-net/actions)
+[![CodeQL](https://github.com/qatoolkit/qatoolkit-engine-httptester-net/workflows/CodeQL%20Analyze/badge.svg)](https://github.com/qatoolkit/qatoolkit-engine-httptester-net/security/code-scanning)
+[![Sonarcloud Quality gate](https://github.com/qatoolkit/qatoolkit-engine-httptester-net/workflows/Sonarqube%20Analyze/badge.svg)](https://sonarcloud.io/dashboard?id=qatoolkit_qatoolkit-engine-httptester-net)
+[![NuGet package](https://img.shields.io/nuget/v/QAToolKit.Engine.HttpTester?label=QAToolKit.Engine.HttpTester)](https://www.nuget.org/packages/QAToolKit.Engine.HttpTester/)
 
 ## Description
 `QAToolKit.Engine.HttpTester` is a .NET Standard 2.1 library, that that contains an implementation of `IHttpTesterClient` that is a thin wrapper around .NET `HttpClient` to allow to write easy Http Request calls.
@@ -67,6 +67,40 @@ using (var client = new HttpTesterClient())
     Assert.True(response.IsSuccessStatusCode);
     Assert.Equal("Giant", msg.Brand);
 }
+```
+
+#### HttpTesterClient Authentication
+
+Currently `HttpTesterClient` supports:
+
+**Basic authentication**
+
+```csharp
+    var response = await client
+        .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+        ....
+        .WithBasicAuthentication("user", "pass")
+        .Start();
+```
+
+**Bearer token authentication**
+
+```csharp
+    var response = await client
+        .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+        ....
+        .WithBearerAuthentication("eXy....")
+        .Start();
+```
+
+**NTLM authentication**
+
+```csharp
+    var response = await client
+        .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+        ....
+        .WithNTKMAuthentication("user", "pass") // or default security context .WithNTKMAuthentication()
+        .Start();
 ```
 
 ### HttpTestAsserter
