@@ -54,7 +54,7 @@ namespace QAToolKit.Engine.HttpTester
             {
                 Name = nameof(ResponseContentContains),
                 Message = $"Body contains '{keyword}'.",
-                IsTrue = caseInsensitive == true ? StringHelper.ContainsCaseInsensitive(bodyString, keyword) : bodyString.Contains(keyword)
+                IsTrue = caseInsensitive ? StringHelper.ContainsCaseInsensitive(bodyString, keyword) : bodyString.Contains(keyword)
             });
 
             return this;
