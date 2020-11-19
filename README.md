@@ -69,6 +69,40 @@ using (var client = new HttpTesterClient())
 }
 ```
 
+#### HttpTesterClient Authentication
+
+Currently `HttpTesterClient` supports:
+
+**Basic authentication**
+
+```csharp
+    var response = await client
+        .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+        ....
+        .WithBasicAuthentication("user", "pass")
+        .Start();
+```
+
+**Bearer token authentication**
+
+```csharp
+    var response = await client
+        .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+        ....
+        .WithBearerAuthentication("eXy....")
+        .Start();
+```
+
+**NTLM authentication**
+
+```csharp
+    var response = await client
+        .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+        ....
+        .WithNTKMAuthentication("user", "pass") // or default security context .WithNTKMAuthentication()
+        .Start();
+```
+
 ### HttpTestAsserter
 
 This is an implementation of the HTTP response message asserter, which can be used to assert different paramters.
