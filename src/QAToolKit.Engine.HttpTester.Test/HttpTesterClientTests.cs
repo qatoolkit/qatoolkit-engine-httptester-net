@@ -401,5 +401,45 @@ namespace QAToolKit.Engine.HttpTester.Test
                 Assert.Equal("Giant", msg.brand.ToString());
             }
         }
+
+        [Fact]
+        public async Task HttpTesterClientPostObjectBodyWithFulUrlWithNTLMDefaultAuthorization_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                var response = await client
+                   .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
+                   .WithJsonBody(BicycleFixture.GetCfr())
+                   .WithMethod(HttpMethod.Post)
+                   .WithNTLMAuthentication()
+                   .Start();
+
+                var msg = await response.GetResponseBody<dynamic>();
+
+                Assert.True(client.Duration < 2000);
+                Assert.True(response.IsSuccessStatusCode);
+                Assert.Equal("Giant", msg.brand.ToString());
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterClientPostObjectBodyWithFulUrlWithNTLMAuthorization_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                var response = await client
+                   .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
+                   .WithJsonBody(BicycleFixture.GetCfr())
+                   .WithMethod(HttpMethod.Post)
+                   .WithNTLMAuthentication("user","pass")
+                   .Start();
+
+                var msg = await response.GetResponseBody<dynamic>();
+
+                Assert.True(client.Duration < 2000);
+                Assert.True(response.IsSuccessStatusCode);
+                Assert.Equal("Giant", msg.brand.ToString());
+            }
+        }
     }
 }
