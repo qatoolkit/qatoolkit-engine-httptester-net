@@ -22,7 +22,7 @@ namespace QAToolKit.Engine.HttpTester
         /// <param name="httpResponseMessage"></param>
         public HttpTestAsserter(HttpResponseMessage httpResponseMessage)
         {
-            _httpResponseMessage = httpResponseMessage;
+            _httpResponseMessage = httpResponseMessage ?? throw new ArgumentNullException($"{nameof(httpResponseMessage)} is null.");
             _assertResults = new List<AssertResult>();
         }
 
@@ -45,7 +45,7 @@ namespace QAToolKit.Engine.HttpTester
         {
             if (string.IsNullOrEmpty(keyword))
             {
-                throw new ArgumentNullException($"Keyword is null.");
+                throw new ArgumentNullException($"{nameof(keyword)} is null.");
             }
 
             var bodyString = _httpResponseMessage.Content.ReadAsStringAsync().GetAwaiter().GetResult();
@@ -54,7 +54,7 @@ namespace QAToolKit.Engine.HttpTester
             {
                 Name = nameof(ResponseContentContains),
                 Message = $"Body contains '{keyword}'.",
-                IsTrue = caseInsensitive == true ? StringHelper.ContainsCaseInsensitive(bodyString, keyword) : bodyString.Contains(keyword)
+                IsTrue = caseInsensitive ? StringHelper.ContainsCaseInsensitive(bodyString, keyword) : bodyString.Contains(keyword)
             });
 
             return this;
@@ -88,7 +88,7 @@ namespace QAToolKit.Engine.HttpTester
         {
             if (string.IsNullOrEmpty(headerName))
             {
-                throw new ArgumentNullException($"Header name is null.");
+                throw new ArgumentNullException($"{nameof(headerName)} is null.");
             }
 
             _assertResults.Add(new AssertResult()
@@ -111,7 +111,7 @@ namespace QAToolKit.Engine.HttpTester
             _assertResults.Add(new AssertResult()
             {
                 Name = nameof(ResponseStatusCodeEquals),
-                Message = $"Expected status code is {httpStatusCode} returne code is {_httpResponseMessage.StatusCode}.",
+                Message = $"Expected status code is '{httpStatusCode}' return code is '{_httpResponseMessage.StatusCode}'.",
                 IsTrue = _httpResponseMessage.StatusCode == httpStatusCode
             });
 

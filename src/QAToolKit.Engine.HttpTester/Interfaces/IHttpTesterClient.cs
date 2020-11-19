@@ -62,6 +62,18 @@ namespace QAToolKit.Engine.HttpTester.Interfaces
         /// <returns></returns>
         IHttpTesterClient WithBearerAuthentication(string accessToken);
         /// <summary>
+        /// Use NTLM authentication
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        IHttpTesterClient WithNTLMAuthentication(string userName, string password);
+        /// <summary>
+        /// Use NTLM authentication which represents the authentication credentials for the current security context in which the application is running.
+        /// </summary>
+        /// <returns></returns>
+        IHttpTesterClient WithNTLMAuthentication();
+        /// <summary>
         /// Start the HTTP request
         /// </summary>
         /// <returns></returns>
