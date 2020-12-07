@@ -4,6 +4,7 @@ using QAToolKit.Engine.HttpTester.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -28,6 +29,7 @@ namespace QAToolKit.Engine.HttpTester
         private HttpMethod _httpMethod;
         private Dictionary<string, string> _queryParameters = null;
         private HttpResponseMessage _responseMessage = null;
+        private MultipartFormDataContent _multipartFormDataContent = null;
 
         /// <summary>
         /// Measured HTTP request duration
@@ -95,6 +97,9 @@ namespace QAToolKit.Engine.HttpTester
         /// <returns></returns>
         public IHttpTesterClient WithJsonBody<T>(T bodyObject)
         {
+            if (_multipartFormDataContent != null)
+                throw new QAToolKitEngineHttpTesterException("Body multipart/form-data already defined on the HTTP client. Can not add application/json content type.");
+
             if (bodyObject == null)
             {
                 return this;
@@ -198,6 +203,57 @@ namespace QAToolKit.Engine.HttpTester
         }
 
         /// <summary>
+        /// Create a multipart form data content and add a file content
+        /// </summary>
+        /// <param name="fileByteArray"></param>
+        /// <param name="httpContentName"></param>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public IHttpTesterClient WithMultipart(byte[] fileByteArray, string httpContentName, string fileName)
+        {
+            if (!string.IsNullOrEmpty(_body))
+                throw new QAToolKitEngineHttpTesterException("Body application/json already defined on the HTTP client. Can not add multipart/form-data content type.");
+            if (fileByteArray == null)
+                throw new ArgumentNullException($"{nameof(fileByteArray)} is null.");
+            if (string.IsNullOrEmpty(httpContentName))
+                throw new ArgumentNullException($"{nameof(httpContentName)} is null.");
+
+            if (_multipartFormDataContent == null)
+            {
+                _multipartFormDataContent = new MultipartFormDataContent();
+            }
+
+            _multipartFormDataContent.Add(new ByteArrayContent(fileByteArray), httpContentName, fileName);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Add a string to a multipart form data
+        /// </summary>
+        /// <param name="httpContentName"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public IHttpTesterClient WithMultipart(string httpContentName, string value)
+        {
+            if (!string.IsNullOrEmpty(_body))
+                throw new QAToolKitEngineHttpTesterException("Body application/json already defined on the HTTP client. Can not add multipart/form-data content type.");
+            if (string.IsNullOrEmpty(httpContentName))
+                throw new ArgumentNullException($"{nameof(httpContentName)} is null.");
+            if (value == null)
+                throw new ArgumentNullException($"{nameof(value)} is null.");
+
+            if (_multipartFormDataContent == null)
+            {
+                _multipartFormDataContent = new MultipartFormDataContent();
+            }
+
+            _multipartFormDataContent.Add(new StringContent(value), httpContentName);
+
+            return this;
+        }
+
+        /// <summary>
         /// Start the HTTP request
         /// </summary>
         /// <returns></returns>
@@ -244,6 +300,11 @@ namespace QAToolKit.Engine.HttpTester
                 if (_body != null)
                 {
                     requestMessage.Content = new StringContent(_body, Encoding.UTF8, "application/json");
+                }
+
+                if (_multipartFormDataContent != null)
+                {
+                    requestMessage.Content = _multipartFormDataContent;
                 }
 
                 _responseMessage = await HttpClient.SendAsync(requestMessage);
