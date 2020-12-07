@@ -74,6 +74,21 @@ namespace QAToolKit.Engine.HttpTester.Interfaces
         /// <returns></returns>
         IHttpTesterClient WithNTLMAuthentication();
         /// <summary>
+        /// Upload a file
+        /// </summary>
+        /// <param name="fileByteArray"></param>
+        /// <param name="httpContentName"></param>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        IHttpTesterClient WithMultipart(byte[] fileByteArray, string httpContentName, string fileName);
+        /// <summary>
+        /// Upload a file
+        /// </summary>
+        /// <param name="httpContentName"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        IHttpTesterClient WithMultipart(string httpContentName, string value);
+        /// <summary>
         /// Start the HTTP request
         /// </summary>
         /// <returns></returns>

@@ -20,5 +20,25 @@ namespace QAToolKit.Engine.HttpTester.Extensions
             var bodyResponse = await httpResponseMessage.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<T>(bodyResponse);
         }
+
+        /// <summary>
+        /// Get response as string
+        /// </summary>
+        /// <param name="httpResponseMessage"></param>
+        /// <returns></returns>
+        public static async Task<string> GetResponseBodyString(this HttpResponseMessage httpResponseMessage)
+        {
+            return await httpResponseMessage.Content.ReadAsStringAsync();
+        }
+
+        /// <summary>
+        /// Get response as byte array
+        /// </summary>
+        /// <param name="httpResponseMessage"></param>
+        /// <returns></returns>
+        public static async Task<byte[]> GetResponseBodyBytes(this HttpResponseMessage httpResponseMessage)
+        {
+            return await httpResponseMessage.Content.ReadAsByteArrayAsync();
+        }
     }
 }
