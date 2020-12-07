@@ -69,6 +69,31 @@ using (var client = new HttpTesterClient())
 }
 ```
 
+**POST File Upload request**
+You can upload files with `multipart/form-data` content type like shown below. 
+There are 2 overloads of `WithMultipart`, one for uploading binary data and the other for string data.
+
+```csharp
+using (var client = new HttpTesterClient())
+{
+    var response = await client
+        .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+        .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+        .WithMethod(HttpMethod.Post)
+        .WithMultipart(image, "FileContent", "logo.png")
+        .WithMultipart("MetaData", "My metadata.")
+        .WithPath("/api/bicycles/1/images")
+        .Start();
+
+    var msg = await response.GetResponseBodyString();
+
+    Assert.Equal("File name: miha.txt, length: 119305", msg);
+    Assert.True(response.IsSuccessStatusCode);
+}
+```
+
+There is double content-type safety built-in and you can not do `WithMultipart` and `WithJsonBody` in the same request.
+
 #### HttpTesterClient Authentication
 
 Currently `HttpTesterClient` supports:
