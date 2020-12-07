@@ -431,7 +431,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
                    .WithJsonBody(BicycleFixture.GetCfr())
                    .WithMethod(HttpMethod.Post)
-                   .WithNTLMAuthentication("user","pass")
+                   .WithNTLMAuthentication("user", "pass")
                    .Start();
 
                 var msg = await response.GetResponseBody<dynamic>();
@@ -439,6 +439,118 @@ namespace QAToolKit.Engine.HttpTester.Test
                 Assert.True(client.Duration < 2000);
                 Assert.True(response.IsSuccessStatusCode);
                 Assert.Equal("Giant", msg.brand.ToString());
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterClientFileUpload_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                byte[] image = new WebClient().DownloadData("https://qatoolkit.io/assets/logo.png");
+
+                var response = await client
+                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
+                 .WithMethod(HttpMethod.Post)
+                 .WithPath("/api/bicycles/1/images")
+                 .WithMultipart(image, "FileContent", "logo.png")
+                 .WithMultipart("FileName", "miha.txt")
+                 .Start();
+
+                var msg = await response.GetResponseBodyString();
+
+                Assert.Equal("File name: miha.txt, length: 119305", msg);
+                Assert.True(response.IsSuccessStatusCode);
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterClientFileUpload2_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                byte[] image = new WebClient().DownloadData("https://qatoolkit.io/assets/logo.png");
+
+                var response = await client
+                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
+                 .WithMethod(HttpMethod.Post)
+                 .WithPath("/api/bicycles/1/images")
+                 .WithMultipart(image, "FileContent", "logo.png")
+                 .WithMultipart("FileName", "miha.txt")
+                 .Start();
+
+                var msg = await response.GetResponseBodyString();
+
+                Assert.Equal("File name: miha.txt, length: 119305", msg);
+                Assert.True(response.IsSuccessStatusCode);
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterClientBrochureUpload_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                byte[] image = new WebClient().DownloadData("https://qatoolkit.io/assets/logo.png");
+
+                var response = await client
+                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
+                 .WithMethod(HttpMethod.Post)
+                 .WithPath("/api/bicycles/1/brochures")
+                 .WithMultipart(image, "Image.FileContent", "logo.png")
+                 .WithMultipart("Image.FileName", "miha.txt")
+                 .WithMultipart("Metadata.Year", "2000")
+                 .WithMultipart("Metadata.Name", "Brochure 2000")
+                 .Start();
+
+                var msg = await response.GetResponseBodyString();
+
+                Assert.Equal("File name: Brochure 2000, image name: miha.txt, length: 119305", msg);
+                Assert.True(response.IsSuccessStatusCode);
+            }
+        }
+
+        [Fact]
+        public void HttpTesterClientBrochureUploadBodyPresent_Fails()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                byte[] image = new WebClient().DownloadData("https://qatoolkit.io/assets/logo.png");
+
+                var response = client
+                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
+                 .WithMethod(HttpMethod.Post)
+                 .WithPath("/api/bicycles/1/brochures")
+                 .WithJsonBody<string>("1234");
+
+                var exception = Assert.Throws<QAToolKitEngineHttpTesterException>(() => client.WithMultipart(image, "Image.FileContent", "logo.png"));
+                Assert.StartsWith("Body application/json already defined on", exception.Message);
+            }
+        }
+
+        [Fact]
+        public void HttpTesterClientBrochureUploadMultipartPresent_Fails()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                byte[] image = new WebClient().DownloadData("https://qatoolkit.io/assets/logo.png");
+
+                var response = client
+                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
+                 .WithMethod(HttpMethod.Post)
+                 .WithPath("/api/bicycles/1/brochures")
+                 .WithMultipart(image, "Image.FileContent", "logo.png")
+                 .WithMultipart("Image.FileName", "miha.txt")
+                 .WithMultipart("Metadata.Year", "2000")
+                 .WithMultipart("Metadata.Name", "Brochure 2000");
+
+               var exception = Assert.Throws<QAToolKitEngineHttpTesterException>(() => client.WithJsonBody<string>("1234"));
+                Assert.StartsWith("Body multipart/form-data already defined", exception.Message);
             }
         }
     }
