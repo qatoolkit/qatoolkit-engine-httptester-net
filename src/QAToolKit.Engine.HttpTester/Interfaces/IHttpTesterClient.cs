@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QAToolKit.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -17,6 +18,13 @@ namespace QAToolKit.Engine.HttpTester.Interfaces
         /// <param name="validateCertificate"></param>
         /// <returns></returns>
         IHttpTesterClient CreateHttpRequest(Uri baseAddress, bool validateCertificate = true);
+        /// <summary>
+        /// Create a HTTP request client from QAToolKit HttpRequest object
+        /// </summary>
+        /// <param name="httpRequest"></param>
+        /// <param name="validateCertificate"></param>
+        /// <returns></returns>
+        IHttpTesterClient CreateHttpRequest(HttpRequest httpRequest, bool validateCertificate = true);
         /// <summary>
         /// Add URL path to the HTTP client
         /// </summary>

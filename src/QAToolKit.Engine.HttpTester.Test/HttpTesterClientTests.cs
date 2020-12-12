@@ -333,11 +333,10 @@ namespace QAToolKit.Engine.HttpTester.Test
                    .WithMethod(HttpMethod.Post)
                    .Start();
 
-                var msg = await response.Content.ReadAsStringAsync();
+                var msg = await response.GetResponseBodyString();
 
                 Assert.True(client.Duration < 2000);
                 Assert.True(response.IsSuccessStatusCode);
-                //Assert.Equal("Giant", msg.brand.ToString());
             }
         }
 
@@ -460,7 +459,7 @@ namespace QAToolKit.Engine.HttpTester.Test
 
                 var msg = await response.GetResponseBodyString();
 
-                Assert.Equal("File name: miha.txt, length: 119305", msg);
+                Assert.Equal("\"File name: miha.txt, length: 119305\"", msg);
                 Assert.True(response.IsSuccessStatusCode);
             }
         }
@@ -483,7 +482,7 @@ namespace QAToolKit.Engine.HttpTester.Test
 
                 var msg = await response.GetResponseBodyString();
 
-                Assert.Equal("File name: miha.txt, length: 119305", msg);
+                Assert.Equal("\"File name: miha.txt, length: 119305\"", msg);
                 Assert.True(response.IsSuccessStatusCode);
             }
         }
@@ -508,7 +507,7 @@ namespace QAToolKit.Engine.HttpTester.Test
 
                 var msg = await response.GetResponseBodyString();
 
-                Assert.Equal("File name: Brochure 2000, image name: miha.txt, length: 119305", msg);
+                Assert.Equal("\"File name: Brochure 2000, image name: miha.txt, length: 119305\"", msg);
                 Assert.True(response.IsSuccessStatusCode);
             }
         }
@@ -551,6 +550,71 @@ namespace QAToolKit.Engine.HttpTester.Test
 
                var exception = Assert.Throws<QAToolKitEngineHttpTesterException>(() => client.WithJsonBody<string>("1234"));
                 Assert.StartsWith("Body multipart/form-data already defined", exception.Message);
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterClientAddPostHttpRequest_Success()
+        {
+            var urlSource = new SwaggerUrlSource(options =>
+            {
+                options.AddBaseUrl(new Uri("https://qatoolkitapi.azurewebsites.net/"));
+                options.AddRequestFilters(new RequestFilter()
+                {
+                    EndpointNameWhitelist = new string[] { "NewBike" }
+                });
+                options.UseSwaggerExampleValues = true;
+            });
+
+            var requests = await urlSource.Load(new Uri[] {
+                new Uri("https://qatoolkitapi.azurewebsites.net/swagger/v1/swagger.json")
+            });
+
+            using (var client = new HttpTesterClient())
+            {
+                var response = await client
+                     .CreateHttpRequest(requests.FirstOrDefault())
+                     .WithJsonBody(BicycleFixture.Get())
+                     .Start();
+
+                var msg = await response.GetResponseBody<Bicycle>();
+
+                Assert.True(client.Duration < 2000);
+                Assert.True(response.IsSuccessStatusCode);
+                Assert.Equal("Giant", msg.Brand);
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterClientAddGetHttpRequest_Success()
+        {
+            var urlSource = new SwaggerUrlSource(options =>
+            {
+                options.AddBaseUrl(new Uri("https://qatoolkitapi.azurewebsites.net/"));
+                options.AddRequestFilters(new RequestFilter()
+                {
+                    EndpointNameWhitelist = new string[] { "GetAllBikes" }
+                });
+                options.UseSwaggerExampleValues = true;
+            });
+
+            var requests = await urlSource.Load(new Uri[] {
+                new Uri("https://qatoolkitapi.azurewebsites.net/swagger/v1/swagger.json")
+            });
+
+            using (var client = new HttpTesterClient())
+            {
+                var response = await client
+                 .CreateHttpRequest(requests.FirstOrDefault())
+                 .Start();
+
+                var msg = await response.GetResponseBody<List<Bicycle>>();
+
+                var expecterResponse = BicycleFixture.GetBicycles().ToExpectedObject();
+                expecterResponse.ShouldEqual(msg);
+
+                Assert.True(client.Duration < 2000);
+                Assert.True(response.IsSuccessStatusCode);
             }
         }
     }
