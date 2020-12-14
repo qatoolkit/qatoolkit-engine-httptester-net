@@ -67,6 +67,69 @@ namespace QAToolKit.Engine.HttpTester
         }
 
         /// <summary>
+        /// Create a HTTP tester client from QAToolKit HttpRequest object
+        /// </summary>
+        /// <param name="httpRequest">Create tester client with BaseUrl, Path, HttpMethod, Headers and URL Query paramteres read from HttpRequest object. Specify other values and parameters manually.</param>
+        /// <param name="validateCertificate"></param>
+        /// <returns></returns>
+        public IHttpTesterClient CreateHttpRequest(HttpRequest httpRequest, bool validateCertificate = true)
+        {
+            if (httpRequest == null)
+                throw new QAToolKitEngineHttpTesterException("'HttpRequest' is null. Pass in the valid object.");
+            if (HttpClient != null)
+                throw new QAToolKitEngineHttpTesterException("HttpClient is already instantiated. Create new 'HttpTesterClient'.");
+
+            var baseAddress = new Uri(httpRequest.BasePath);
+
+            HttpHandler = new HttpClientHandler();
+
+            if (!validateCertificate &&
+                (baseAddress.Scheme == Uri.UriSchemeHttp || baseAddress.Scheme == Uri.UriSchemeHttps))
+            {
+                HttpHandler.ClientCertificateOptions = ClientCertificateOption.Manual;
+                HttpHandler.ServerCertificateCustomValidationCallback =
+                (httpRequestMessage, cert, cetChain, policyErrors) =>
+                {
+                    return true;
+                };
+            }
+
+            HttpClient = new HttpClient(HttpHandler)
+            {
+                BaseAddress = baseAddress
+            };
+
+            if (string.IsNullOrEmpty(httpRequest.Path))
+            {
+                throw new QAToolKitEngineHttpTesterException("HttpRequest Path is required.");
+            }
+
+            _path = httpRequest.Path;
+
+            _httpMethod = httpRequest.Method;
+
+            //Query parameters
+            if (_queryParameters == null)
+                _queryParameters = new Dictionary<string, string>();
+
+            foreach (var parameter in httpRequest.Parameters.Where(t => t.Location == Location.Query && t.Value != null))
+            {
+                _queryParameters.Add(parameter.Name, parameter.Value);
+            }
+
+            //Headers
+            if (_headers == null)
+                _headers = new Dictionary<string, string>();
+
+            foreach (var header in httpRequest.Parameters.Where(t => t.Location == Location.Header && t.Value != null))
+            {
+                _headers.Add(header.Name, header.Value);
+            }
+
+            return this;
+        }
+
+        /// <summary>
         /// Add URL path to the HTTP client
         /// </summary>
         /// <param name="urlPath"></param>
@@ -291,69 +354,6 @@ namespace QAToolKit.Engine.HttpTester
             }
 
             _multipartFormDataContent.Add(new StringContent(value), httpContentName);
-
-            return this;
-        }
-
-        /// <summary>
-        /// Create a HTTP tester client from QAToolKit HttpRequest object
-        /// </summary>
-        /// <param name="httpRequest">Create tester client with BaseUrl, Path, HttpMethod, Headers and URL Query paramteres read from HttpRequest object. Specify other values and parameters manually.</param>
-        /// <param name="validateCertificate"></param>
-        /// <returns></returns>
-        public IHttpTesterClient CreateHttpRequest(HttpRequest httpRequest, bool validateCertificate = true)
-        {
-            if (httpRequest == null)
-                throw new QAToolKitEngineHttpTesterException("'HttpRequest' is null. Pass in the valid object.");
-            if (HttpClient != null)
-                throw new QAToolKitEngineHttpTesterException("HttpClient is already instantiated. Create new 'HttpTesterClient'.");
-
-            var baseAddress = new Uri(httpRequest.BasePath);
-
-            HttpHandler = new HttpClientHandler();
-
-            if (!validateCertificate &&
-                (baseAddress.Scheme == Uri.UriSchemeHttp || baseAddress.Scheme == Uri.UriSchemeHttps))
-            {
-                HttpHandler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                HttpHandler.ServerCertificateCustomValidationCallback =
-                (httpRequestMessage, cert, cetChain, policyErrors) =>
-                {
-                    return true;
-                };
-            }
-
-            HttpClient = new HttpClient(HttpHandler)
-            {
-                BaseAddress = baseAddress
-            };
-
-            if (string.IsNullOrEmpty(httpRequest.Path))
-            {
-                throw new QAToolKitEngineHttpTesterException("HttpRequest Path is required.");
-            }
-
-            _path = httpRequest.Path;
-
-            _httpMethod = httpRequest.Method;
-
-            //Query parameters
-            if (_queryParameters == null)
-                _queryParameters = new Dictionary<string, string>();
-
-            foreach (var parameter in httpRequest.Parameters.Where(t => t.Location == Location.Query && t.Value != null))
-            {
-                _queryParameters.Add(parameter.Name, parameter.Value);
-            }
-
-            //Headers
-            if (_headers == null)
-                _headers = new Dictionary<string, string>();
-
-            foreach (var header in httpRequest.Parameters.Where(t => t.Location == Location.Header && t.Value != null))
-            {
-                _headers.Add(header.Name, header.Value);
-            }
 
             return this;
         }
