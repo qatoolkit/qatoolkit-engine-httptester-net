@@ -35,6 +35,6 @@
 
 	<ItemGroup>
 	  <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-	  <PackageReference Include="QAToolKit.Core" Version="0.3.0" />
+	  <PackageReference Include="QAToolKit.Core" Version="0.3.6" />
 	</ItemGroup>
 </Project>

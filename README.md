@@ -173,7 +173,15 @@ Currently `HttpTesterClient` supports:
 
 ### HttpTestAsserter
 
-This is an implementation of the HTTP response message asserter, which can be used to assert different paramters.
+This is an implementation of the HTTP response message asserter, which can be used to assert different parameters.
+
+Here is a list of Asserters:
+- `ResponseContentContains`: HTTP body contains a string (ignores case)
+- `RequestDurationEquals`: Verify request duration
+- `ResponseStatusCodeEquals`: Verify if response code equals
+- `ResponseHasHttpHeader`: HTTP response contains a header
+- `ResponseStatusCodeIsSuccess`: HTTP response status code is one of 2xx
+- `ResponseBodyIsEmpty`: HTTP response body is empty
 
 Asserter produces a list of `AssertResult`:
 
@@ -220,6 +228,7 @@ using (var client = new HttpTesterClient())
         .ResponseContentContains("scott")
         .RequestDurationEquals(duration, (x) => x < 1000)
         .ResponseStatusCodeEquals(HttpStatusCode.OK)
+        .ResponseStatusCodeIsSuccess()
         .AssertAll();
 
     //if you use xUnit, you can assert the results like this
@@ -232,7 +241,9 @@ using (var client = new HttpTesterClient())
 
 ## To-do
 
-- **This library is an early alpha version**
+- **This library is a beta version**
+- Add more Http Asserters
+- Cover more test cases with HTTP Tester client
 
 ## License
 
