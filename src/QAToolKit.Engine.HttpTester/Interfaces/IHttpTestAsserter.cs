@@ -37,6 +37,16 @@ namespace QAToolKit.Engine.HttpTester.Interfaces
         /// <returns></returns>
         IHttpTestAsserter ResponseHasHttpHeader(string headerName);
         /// <summary>
+        /// HTTP response status code is one of 2xx
+        /// </summary>
+        /// <returns></returns>
+        IHttpTestAsserter ResponseStatusCodeIsSuccess();
+        /// <summary>
+        /// HTTP response body is empty
+        /// </summary>
+        /// <returns></returns>
+        IHttpTestAsserter ResponseBodyIsEmpty();
+        /// <summary>
         /// Return all Assert messages of the Asserter
         /// </summary>
         /// <returns></returns>
