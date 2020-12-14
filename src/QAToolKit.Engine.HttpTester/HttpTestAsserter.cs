@@ -3,7 +3,6 @@ using QAToolKit.Engine.HttpTester.Interfaces;
 using QAToolKit.Engine.HttpTester.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 
@@ -97,7 +96,7 @@ namespace QAToolKit.Engine.HttpTester
                 Name = nameof(ResponseHasHttpHeader),
                 Message = $"Contains header '{headerName}'.",
                 IsTrue = _httpResponseMessage.Headers.TryGetValues(headerName, out var values)
-        });
+            });
 
             return this;
         }

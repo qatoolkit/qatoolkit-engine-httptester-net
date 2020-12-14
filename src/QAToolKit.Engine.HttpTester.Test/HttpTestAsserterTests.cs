@@ -31,7 +31,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                 var duration = client.Duration;
                 var assertResults = asserter
                     .ResponseContentContains("scott")
-                    .RequestDurationEquals(duration, (x) => x < 1000)
+                    .RequestDurationEquals(duration, (x) => x < 2000)
                     .ResponseStatusCodeEquals(HttpStatusCode.OK)
                     .ResponseHasHttpHeader("Date")
                     .AssertAll();
@@ -116,7 +116,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                 var duration = client.Duration;
                 Assert.Throws<ArgumentNullException>(() => asserter
                     .ResponseContentContains("scott")
-                    .RequestDurationEquals(duration, (x) => x < 1000)
+                    .RequestDurationEquals(duration, (x) => x < 2000)
                     .ResponseStatusCodeEquals(HttpStatusCode.OK)
                     .ResponseHasHttpHeader(null)
                     .AssertAll());
