@@ -33,6 +33,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                     .ResponseContentContains("scott")
                     .RequestDurationEquals(duration, (x) => x < 1000)
                     .ResponseStatusCodeEquals(HttpStatusCode.OK)
+                    .ResponseHasHttpHeader("Date")
                     .AssertAll();
 
                 foreach (var result in assertResults)
@@ -168,9 +169,38 @@ namespace QAToolKit.Engine.HttpTester.Test
                     .ResponseContentContains("id")
                     .RequestDurationEquals(duration, (x) => (x > 100 && x < 1000))
                     .ResponseStatusCodeEquals(HttpStatusCode.OK)
+                    .ResponseStatusCodeIsSuccess()
                     .AssertAll();
 
-                Assert.Equal(4, assertResults.ToList().Count);
+                Assert.Equal(5, assertResults.ToList().Count);
+                foreach (var result in assertResults)
+                {
+                    Assert.True(result.IsTrue, result.Message);
+                }
+            }
+        }
+
+        [Fact]
+        public async Task HttpTestAsserterDeleteIsBodyEmpty_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                var response = await client
+                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                 .WithMethod(HttpMethod.Delete)
+                 .WithPath("/api/bicycles/1")
+                 .Start();
+
+                var asserter = new HttpTestAsserter(response);
+                var duration = client.Duration;
+                var assertResults = asserter
+                    .ResponseBodyIsEmpty()
+                    .RequestDurationEquals(duration, (x) => (x > 100 && x < 1000))
+                    .ResponseStatusCodeIsSuccess()
+                    .AssertAll();
+
+                Assert.Equal(3, assertResults.ToList().Count);
                 foreach (var result in assertResults)
                 {
                     Assert.True(result.IsTrue, result.Message);

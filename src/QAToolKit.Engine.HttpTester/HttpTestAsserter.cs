@@ -3,6 +3,7 @@ using QAToolKit.Engine.HttpTester.Interfaces;
 using QAToolKit.Engine.HttpTester.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 
@@ -95,8 +96,8 @@ namespace QAToolKit.Engine.HttpTester
             {
                 Name = nameof(ResponseHasHttpHeader),
                 Message = $"Contains header '{headerName}'.",
-                IsTrue = _httpResponseMessage.Headers.Contains(headerName)
-            });
+                IsTrue = _httpResponseMessage.Headers.TryGetValues(headerName, out var values)
+        });
 
             return this;
         }
@@ -113,6 +114,40 @@ namespace QAToolKit.Engine.HttpTester
                 Name = nameof(ResponseStatusCodeEquals),
                 Message = $"Expected status code is '{httpStatusCode}' return code is '{_httpResponseMessage.StatusCode}'.",
                 IsTrue = _httpResponseMessage.StatusCode == httpStatusCode
+            });
+
+            return this;
+        }
+
+        /// <summary>
+        /// HTTP response status code is one of 2xx
+        /// </summary>
+        /// <returns></returns>
+        public IHttpTestAsserter ResponseStatusCodeIsSuccess()
+        {
+            _assertResults.Add(new AssertResult()
+            {
+                Name = nameof(ResponseStatusCodeIsSuccess),
+                Message = $"Expected status code is '2xx' return code is '{_httpResponseMessage.StatusCode}'.",
+                IsTrue = _httpResponseMessage.IsSuccessStatusCode
+            });
+
+            return this;
+        }
+
+        /// <summary>
+        /// HTTP response body is empty
+        /// </summary>
+        /// <returns></returns>
+        public IHttpTestAsserter ResponseBodyIsEmpty()
+        {
+            var bodyString = _httpResponseMessage.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+            _assertResults.Add(new AssertResult()
+            {
+                Name = nameof(ResponseBodyIsEmpty),
+                Message = $"Expected empty body, returned body is '{bodyString}'.",
+                IsTrue = string.IsNullOrEmpty(bodyString)
             });
 
             return this;

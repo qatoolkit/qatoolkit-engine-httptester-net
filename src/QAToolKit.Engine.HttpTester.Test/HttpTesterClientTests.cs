@@ -567,7 +567,7 @@ namespace QAToolKit.Engine.HttpTester.Test
             });
 
             var requests = await urlSource.Load(new Uri[] {
-                new Uri("https://qatoolkitapi.azurewebsites.net/swagger/v1/swagger.json")
+                new Uri("https://qatoolkitapi.azurewebsites.net/swagger/v2/swagger.json")
             });
 
             using (var client = new HttpTesterClient())
@@ -599,7 +599,7 @@ namespace QAToolKit.Engine.HttpTester.Test
             });
 
             var requests = await urlSource.Load(new Uri[] {
-                new Uri("https://qatoolkitapi.azurewebsites.net/swagger/v1/swagger.json")
+                new Uri("https://qatoolkitapi.azurewebsites.net/swagger/v2/swagger.json")
             });
 
             using (var client = new HttpTesterClient())
