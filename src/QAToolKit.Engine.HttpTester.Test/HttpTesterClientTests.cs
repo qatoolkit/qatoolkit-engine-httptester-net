@@ -548,7 +548,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithMultipart("Metadata.Year", "2000")
                  .WithMultipart("Metadata.Name", "Brochure 2000");
 
-               var exception = Assert.Throws<QAToolKitEngineHttpTesterException>(() => client.WithJsonBody<string>("1234"));
+                var exception = Assert.Throws<QAToolKitEngineHttpTesterException>(() => client.WithJsonBody<string>("1234"));
                 Assert.StartsWith("Body multipart/form-data already defined", exception.Message);
             }
         }
@@ -611,6 +611,75 @@ namespace QAToolKit.Engine.HttpTester.Test
                 var msg = await response.GetResponseBody<List<Bicycle>>();
 
                 var expecterResponse = BicycleFixture.GetBicycles().ToExpectedObject();
+                expecterResponse.ShouldEqual(msg);
+
+                Assert.True(client.Duration < 2000);
+                Assert.True(response.IsSuccessStatusCode);
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterClientGetBikeByIdRequest_Success()
+        {
+            var urlSource = new SwaggerUrlSource(options =>
+            {
+                options.AddBaseUrl(new Uri("https://qatoolkitapi.azurewebsites.net/"));
+                options.AddRequestFilters(new RequestFilter()
+                {
+                    EndpointNameWhitelist = new string[] { "GetBike" }
+                });
+                options.UseSwaggerExampleValues = true;
+            });
+
+            var requests = await urlSource.Load(new Uri[] {
+                new Uri("https://qatoolkitapi.azurewebsites.net/swagger/v2/swagger.json")
+            });
+
+            using (var client = new HttpTesterClient())
+            {
+                var response = await client
+                 .CreateHttpRequest(requests.FirstOrDefault())
+                 .WithPathReplacementValues(new Dictionary<string, string>() { { "id", "2" } })
+                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
+                 .Start();
+
+                var msg = await response.GetResponseBody<Bicycle>();
+
+                var expecterResponse = BicycleFixture.GetCannondale().ToExpectedObject();
+                expecterResponse.ShouldEqual(msg);
+
+                Assert.True(client.Duration < 2000);
+                Assert.True(response.IsSuccessStatusCode);
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterClientGetBikesByTypeHttpRequest_Success()
+        {
+            var urlSource = new SwaggerUrlSource(options =>
+            {
+                options.AddBaseUrl(new Uri("https://qatoolkitapi.azurewebsites.net/"));
+                options.AddRequestFilters(new RequestFilter()
+                {
+                    EndpointNameWhitelist = new string[] { "GetAllBikes" }
+                });
+                options.UseSwaggerExampleValues = true;
+            });
+
+            var requests = await urlSource.Load(new Uri[] {
+                new Uri("https://qatoolkitapi.azurewebsites.net/swagger/v2/swagger.json")
+            });
+
+            using (var client = new HttpTesterClient())
+            {
+                var response = await client
+                 .CreateHttpRequest(requests.FirstOrDefault())
+                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" }, {"bicycleType", "1" } })
+                 .Start();
+
+                var msg = await response.GetResponseBody<List<Bicycle>>();
+
+                var expecterResponse = BicycleFixture.GetCannondaleArray().ToExpectedObject();
                 expecterResponse.ShouldEqual(msg);
 
                 Assert.True(client.Duration < 2000);

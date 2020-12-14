@@ -32,6 +32,12 @@ namespace QAToolKit.Engine.HttpTester.Interfaces
         /// <returns></returns>
         IHttpTesterClient WithPath(string urlPath);
         /// <summary>
+        /// Replace URL path with path parameters from passed dictionary
+        /// </summary>
+        /// <param name="pathParameters"></param>
+        /// <returns></returns>
+        IHttpTesterClient WithPathReplacementValues(Dictionary<string, string> pathParameters);
+        /// <summary>
         /// Add HTTP method to the HTTP client
         /// </summary>
         /// <param name="httpMethod"></param>

@@ -15,6 +15,31 @@ namespace QAToolKit.Engine.HttpTester.Test.Fixtures
             };
         }
 
+        public static Bicycle GetCannondale()
+        {
+            return new Bicycle
+            {
+                Id = 2,
+                Name = "CAADX",
+                Brand = "Cannondale",
+                Type = BicycleType.Gravel
+            };
+        }
+
+        public static List<Bicycle> GetCannondaleArray()
+        {
+            return new List<Bicycle>()
+            {
+                new Bicycle()
+                {
+                    Id = 2,
+                    Name = "CAADX",
+                    Brand = "Cannondale",
+                    Type = BicycleType.Gravel
+                }
+            };
+        }
+
         public static Bicycle GetFoil()
         {
             return new Bicycle
