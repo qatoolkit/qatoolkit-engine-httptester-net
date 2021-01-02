@@ -3,7 +3,7 @@
 [![CodeQL](https://github.com/qatoolkit/qatoolkit-engine-httptester-net/workflows/CodeQL%20Analyze/badge.svg)](https://github.com/qatoolkit/qatoolkit-engine-httptester-net/security/code-scanning)
 [![Sonarcloud Quality gate](https://github.com/qatoolkit/qatoolkit-engine-httptester-net/workflows/Sonarqube%20Analyze/badge.svg)](https://sonarcloud.io/dashboard?id=qatoolkit_qatoolkit-engine-httptester-net)
 [![NuGet package](https://img.shields.io/nuget/v/QAToolKit.Engine.HttpTester?label=QAToolKit.Engine.HttpTester)](https://www.nuget.org/packages/QAToolKit.Engine.HttpTester/)
-[![Discord](https://img.shields.io/discord/787220825127780354?color=%23267CB9&label=Discord%20chat)](https://discord.com/invite/tu3WDV5Z?utm_source=Discord%20Widget&utm_medium=Connect)
+[![Discord](https://img.shields.io/discord/787220825127780354?color=%23267CB9&label=Discord%20chat)](https://discord.gg/hYs6ayYQC5)
 
 ## Description
 `QAToolKit.Engine.HttpTester` is a .NET Standard 2.1 library, that that contains an implementation of `IHttpTesterClient` that is a thin wrapper around .NET `HttpClient` to allow to write easy Http Request calls.
@@ -12,7 +12,7 @@ Supported .NET frameworks and standards: `netstandard2.0`, `netstandard2.1`, `ne
 
 Get in touch with me on:
 
-[![Discord](https://img.shields.io/discord/787220825127780354?color=%23267CB9&label=Discord%20chat)](https://discord.com/invite/tu3WDV5Z?utm_source=Discord%20Widget&utm_medium=Connect)
+[![Discord](https://img.shields.io/discord/787220825127780354?color=%23267CB9&label=Discord%20chat)](https://discord.gg/hYs6ayYQC5)
 
 ### HttpTesterClient
 
@@ -249,7 +249,7 @@ using (var client = new HttpTesterClient())
 
 MIT License
 
-Copyright (c) 2020 Miha Jakovac
+Copyright (c) 2020-2021 Miha Jakovac
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
