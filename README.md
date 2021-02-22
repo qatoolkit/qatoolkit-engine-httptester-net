@@ -18,7 +18,7 @@ Get in touch with me on:
 
 A sample on how to easily call the HTTP request with .NET `HttpClient`:
 
-**GET request**
+##### GET request
 ```csharp
 using (var client = new HttpTesterClient())
 {
@@ -35,12 +35,13 @@ using (var client = new HttpTesterClient())
     var expecterResponse = BicycleFixture.GetBicycles().ToExpectedObject();
     expecterResponse.ShouldEqual(msg);
 
-    Assert.True(client.Duration < 2000);
+    Assert.True(client.Duration < 2000); //Start() method execution duration
+    Assert.True(client.HttpDuration < 2000); //HTTP request duration
     Assert.True(response.IsSuccessStatusCode);
 }
 ```
 
-**POST request**
+##### POST request
 ```csharp
 
 //Payload object
@@ -74,7 +75,7 @@ using (var client = new HttpTesterClient())
 }
 ```
 
-**POST File Upload request**
+##### POST File Upload request
 
 You can upload files with `multipart/form-data` content type like shown below. 
 There are 2 overloads of `WithMultipart`, one for uploading binary data and the other for string data.
@@ -100,7 +101,31 @@ using (var client = new HttpTesterClient())
 
 There is content-type safety built-in and you can not do `WithMultipart` and `WithJsonBody` in the same request.
 
-**Create Tester client from QAToolKit Swagger request**
+##### Deserialize HttpResponse message body
+
+`QAToolKit.Engine.HttpTester` supports 4 `HttpResponse` helper methods to give you maximum flexibility when reading reponse body.
+
+- `GetResponseBodyString`: return response content as a string.
+- `GetResponseJsonBody`: deserialize response content from JSON to object
+- `GetResponseXmlBody`: deserialize response content from XML to object.
+- `GetResponseBodyBytes`: return response content as byte array.
+- [Obsolete] `GetResponseBody`: this is obsolete, it deserializes response content from JSON to object. It's replaced by `GetResponseJsonBody`.
+
+##### HttpClient execution time is measured
+
+The library extends `HttpClient` object with `Duration` and `HttpDuration` properties. The first returns the measured duration of `Start();` method and the latter return the duration of HTTP request execution.
+
+```csharp
+    var response = await client
+        .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+        .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+        .Start();
+        
+    client.Duration; //Start() method execution duration
+    client.HttpDuration; //HTTP request duration
+```
+
+##### Create Tester client from QAToolKit Swagger request
 
 If you are using QAToolKit Swagger library to generate `HttpRequest` object you can use a `CreateHttpRequest` override.
 
@@ -141,7 +166,7 @@ using (var client = new HttpTesterClient())
 
 Currently `HttpTesterClient` supports:
 
-**Basic authentication**
+##### Basic authentication
 
 ```csharp
     var response = await client
@@ -151,7 +176,7 @@ Currently `HttpTesterClient` supports:
         .Start();
 ```
 
-**Bearer token authentication**
+##### Bearer token authentication
 
 ```csharp
     var response = await client
@@ -161,7 +186,7 @@ Currently `HttpTesterClient` supports:
         .Start();
 ```
 
-**NTLM authentication**
+##### NTLM authentication
 
 ```csharp
     var response = await client
