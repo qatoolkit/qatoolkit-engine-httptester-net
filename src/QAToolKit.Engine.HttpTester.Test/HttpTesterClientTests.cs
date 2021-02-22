@@ -413,7 +413,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                    .WithNTLMAuthentication()
                    .Start();
 
-                var msg = await response.GetResponseBody<dynamic>();
+                var msg = await response.GetResponseJsonBody<dynamic>();
 
                 Assert.True(client.Duration < 2000);
                 Assert.True(response.IsSuccessStatusCode);

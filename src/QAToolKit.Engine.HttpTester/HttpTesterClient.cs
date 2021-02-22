@@ -33,9 +33,14 @@ namespace QAToolKit.Engine.HttpTester
         private MultipartFormDataContent _multipartFormDataContent = null;
 
         /// <summary>
-        /// Measured HTTP request duration
+        /// Measured duration of the whole request execution
         /// </summary>
         public long Duration { get; private set; }
+        
+        /// <summary>
+        /// Measured duration of the HTTP request execution (HttpClient.StartAsync(...))
+        /// </summary>
+        public long HttpDuration { get; private set; }
 
         /// <summary>
         /// Create HTTP request client with or without certificate validation
@@ -52,10 +57,7 @@ namespace QAToolKit.Engine.HttpTester
             {
                 HttpHandler.ClientCertificateOptions = ClientCertificateOption.Manual;
                 HttpHandler.ServerCertificateCustomValidationCallback =
-                (httpRequestMessage, cert, cetChain, policyErrors) =>
-                {
-                    return true;
-                };
+                (httpRequestMessage, cert, cetChain, policyErrors) => true;
             }
 
             HttpClient = new HttpClient(HttpHandler)
@@ -69,7 +71,7 @@ namespace QAToolKit.Engine.HttpTester
         /// <summary>
         /// Create a HTTP tester client from QAToolKit HttpRequest object
         /// </summary>
-        /// <param name="httpRequest">Create tester client with BaseUrl, Path, HttpMethod, Headers and URL Query paramteres read from HttpRequest object. Specify other values and parameters manually.</param>
+        /// <param name="httpRequest">Create tester client with BaseUrl, Path, HttpMethod, Headers and URL Query parameters read from HttpRequest object. Specify other values and parameters manually.</param>
         /// <param name="validateCertificate"></param>
         /// <returns></returns>
         public IHttpTesterClient CreateHttpRequest(HttpRequest httpRequest, bool validateCertificate = true)
@@ -88,10 +90,7 @@ namespace QAToolKit.Engine.HttpTester
             {
                 HttpHandler.ClientCertificateOptions = ClientCertificateOption.Manual;
                 HttpHandler.ServerCertificateCustomValidationCallback =
-                (httpRequestMessage, cert, cetChain, policyErrors) =>
-                {
-                    return true;
-                };
+                (httpRequestMessage, cert, cetChain, policyErrors) => true;
             }
 
             HttpClient = new HttpClient(HttpHandler)
@@ -109,8 +108,7 @@ namespace QAToolKit.Engine.HttpTester
             _httpMethod = httpRequest.Method;
 
             //Query parameters
-            if (_queryParameters == null)
-                _queryParameters = new Dictionary<string, string>();
+            _queryParameters ??= new Dictionary<string, string>();
 
             foreach (var parameter in httpRequest.Parameters.Where(t => t.Location == Location.Query && t.Value != null))
             {
@@ -118,8 +116,7 @@ namespace QAToolKit.Engine.HttpTester
             }
 
             //Headers
-            if (_headers == null)
-                _headers = new Dictionary<string, string>();
+            _headers ??= new Dictionary<string, string>();
 
             foreach (var header in httpRequest.Parameters.Where(t => t.Location == Location.Header && t.Value != null))
             {
@@ -136,16 +133,13 @@ namespace QAToolKit.Engine.HttpTester
         /// <returns></returns>
         public IHttpTesterClient WithPath(string urlPath)
         {
-            if (urlPath == null)
-                throw new ArgumentException($"{nameof(urlPath)} is null.");
-
-            _path = urlPath;
+            _path = urlPath ?? throw new ArgumentException($"{nameof(urlPath)} is null.");
 
             return this;
         }
 
         /// <summary>
-        /// Replace URL path with path parametrs from passed dictionary
+        /// Replace URL path with path parameters from passed dictionary
         /// </summary>
         /// <param name="pathParameters"></param>
         /// <returns></returns>
@@ -172,10 +166,7 @@ namespace QAToolKit.Engine.HttpTester
         /// <returns></returns>
         public IHttpTesterClient WithHeaders(Dictionary<string, string> headers)
         {
-            if (headers == null)
-                throw new ArgumentException($"{nameof(headers)} is null.");
-
-            _headers = headers;
+            _headers = headers ?? throw new ArgumentException($"{nameof(headers)} is null.");
 
             return this;
         }
@@ -196,7 +187,7 @@ namespace QAToolKit.Engine.HttpTester
                 return this;
             }
 
-            if (typeof(T) == typeof(String))
+            if (typeof(T) == typeof(string))
             {
                 _body = bodyObject.ToString();
             }
@@ -224,16 +215,13 @@ namespace QAToolKit.Engine.HttpTester
         }
 
         /// <summary>
-        /// Specify HTTP query paramters to HTTP client
+        /// Specify HTTP query parameters to HTTP client
         /// </summary>
         /// <param name="queryParameters"></param>
         /// <returns></returns>
         public IHttpTesterClient WithQueryParams(Dictionary<string, string> queryParameters)
         {
-            if (queryParameters == null)
-                throw new ArgumentException($"{nameof(queryParameters)} is null.");
-
-            _queryParameters = queryParameters;
+            _queryParameters = queryParameters ?? throw new ArgumentException($"{nameof(queryParameters)} is null.");
 
             return this;
         }
@@ -252,7 +240,7 @@ namespace QAToolKit.Engine.HttpTester
                 throw new ArgumentException($"{nameof(password)} is null.");
 
             var authenticationString = $"{userName}:{password}";
-            var base64EncodedAuthenticationString = Convert.ToBase64String(ASCIIEncoding.ASCII.GetBytes(authenticationString));
+            var base64EncodedAuthenticationString = Convert.ToBase64String(Encoding.ASCII.GetBytes(authenticationString));
             HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString);
 
             return this;
@@ -323,10 +311,7 @@ namespace QAToolKit.Engine.HttpTester
             if (string.IsNullOrEmpty(httpContentName))
                 throw new ArgumentNullException($"{nameof(httpContentName)} is null.");
 
-            if (_multipartFormDataContent == null)
-            {
-                _multipartFormDataContent = new MultipartFormDataContent();
-            }
+            _multipartFormDataContent ??= new MultipartFormDataContent();
 
             _multipartFormDataContent.Add(new ByteArrayContent(fileByteArray), httpContentName, fileName);
 
@@ -348,10 +333,7 @@ namespace QAToolKit.Engine.HttpTester
             if (value == null)
                 throw new ArgumentNullException($"{nameof(value)} is null.");
 
-            if (_multipartFormDataContent == null)
-            {
-                _multipartFormDataContent = new MultipartFormDataContent();
-            }
+            _multipartFormDataContent ??= new MultipartFormDataContent();
 
             _multipartFormDataContent.Add(new StringContent(value), httpContentName);
 
@@ -364,6 +346,9 @@ namespace QAToolKit.Engine.HttpTester
         /// <returns></returns>
         public async Task<HttpResponseMessage> Start()
         {
+            var sw = new Stopwatch();
+            sw.Start();
+            
             if (HttpClient == null)
                 throw new QAToolKitEngineHttpTesterException("HttpClient is null. Create an object first with 'CreateHttpRequest'.");
             if (_httpMethod == null)
@@ -371,22 +356,16 @@ namespace QAToolKit.Engine.HttpTester
             if (_httpMethod == HttpMethod.Get && _body != null)
                 throw new QAToolKitEngineHttpTesterException("'Get' method can not have a HTTP body.");
 
-            StringBuilder queryString = new StringBuilder();
+            var queryString = new StringBuilder();
             if (_queryParameters != null)
             {
                 queryString.Append("?");
 
-                List<string> array = new List<string>();
-                foreach (var query in _queryParameters)
-                {
-                    array.Add($"{query.Key}={query.Value}");
-                }
+                var array = _queryParameters.Select(query => $"{query.Key}={query.Value}").ToList();
 
                 queryString.Append(string.Join("&", array));
             }
 
-            var sw = new Stopwatch();
-            sw.Start();
             using (var requestMessage = new HttpRequestMessage(_httpMethod, _path + queryString.ToString()))
             {
                 if (_headers != null)
@@ -407,8 +386,14 @@ namespace QAToolKit.Engine.HttpTester
                     requestMessage.Content = _multipartFormDataContent;
                 }
 
+                var swHttp = new Stopwatch();
+                swHttp.Start();
                 _responseMessage = await HttpClient.SendAsync(requestMessage);
+                swHttp.Stop();
+
+                HttpDuration = swHttp.ElapsedMilliseconds;
             }
+            
             sw.Stop();
 
             Duration = sw.ElapsedMilliseconds;
