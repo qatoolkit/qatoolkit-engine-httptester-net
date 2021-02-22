@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -114,9 +115,11 @@ namespace QAToolKit.Engine.HttpTester.Test
                 var asserter = new HttpTestAsserter(response);
 
                 var duration = client.Duration;
+                var httpDuration = client.HttpDuration;
                 Assert.Throws<ArgumentNullException>(() => asserter
                     .ResponseContentContains("scott")
                     .RequestDurationEquals(duration, (x) => x < 2000)
+                    .RequestDurationEquals(httpDuration, (x) => x < 1800)
                     .ResponseStatusCodeEquals(HttpStatusCode.OK)
                     .ResponseHasHttpHeader(null)
                     .AssertAll());
@@ -196,7 +199,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                 var duration = client.Duration;
                 var assertResults = asserter
                     .ResponseBodyIsEmpty()
-                    .RequestDurationEquals(duration, (x) => (x > 100 && x < 1000))
+                    .RequestDurationEquals(duration, (x) => (x > 100 && x < 2000))
                     .ResponseStatusCodeIsSuccess()
                     .AssertAll();
 
