@@ -23,12 +23,5 @@ namespace QAToolKit.Engine.HttpTester.Exceptions
         public QAToolKitEngineHttpTesterException(string message, Exception innerException) : base(message, innerException)
         {
         }
-
-        /// <summary>
-        /// QA Toolkit core exception
-        /// </summary>
-        protected QAToolKitEngineHttpTesterException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
     }
 }

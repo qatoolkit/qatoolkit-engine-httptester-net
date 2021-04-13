@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace QAToolKit.Engine.HttpTester.Interfaces
@@ -87,6 +88,11 @@ namespace QAToolKit.Engine.HttpTester.Interfaces
         /// </summary>
         /// <returns></returns>
         IHttpTesterClient WithNTLMAuthentication();
+        /// <summary>
+        /// Authenticate with client certificate
+        /// </summary>
+        /// <returns></returns>
+        IHttpTesterClient WithCertificateAuthentication(X509Certificate2 certificate);
         /// <summary>
         /// Upload a file
         /// </summary>

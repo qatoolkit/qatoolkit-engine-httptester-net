@@ -30,10 +30,10 @@ using (var client = new HttpTesterClient())
         .WithBearerAuthentication("eXy....")
         .Start();
 
-    var msg = await response.GetResponseBody<List<Bicycle>>();
+    var msg = await response.GetResponseJsonBody<List<Bicycle>>();
 
-    var expecterResponse = BicycleFixture.GetBicycles().ToExpectedObject();
-    expecterResponse.ShouldEqual(msg);
+    var expectedResponse = BicycleFixture.GetBicycles().ToExpectedObject();
+    expectedResponse.ShouldEqual(msg);
 
     Assert.True(client.Duration < 2000); //Start() method execution duration
     Assert.True(client.HttpDuration < 2000); //HTTP request duration
@@ -64,10 +64,10 @@ using (var client = new HttpTesterClient())
         .WithBasicAuthentication("user", "pass")
         .Start();
 
-    var msg = await response.GetResponseBody<Bicycle>();
+    var msg = await response.GetResponseJsonBody<Bicycle>();
 
-    var expecterResponse = bicycle.ToExpectedObject();
-    expecterResponse.ShouldEqual(msg);
+    var expectedResponse = bicycle.ToExpectedObject();
+    expectedResponse.ShouldEqual(msg);
 
     Assert.True(client.Duration < 2000);
     Assert.True(response.IsSuccessStatusCode);
@@ -193,6 +193,18 @@ Currently `HttpTesterClient` supports:
         .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
         ....
         .WithNTLMAuthentication("user", "pass") // or default security context .WithNTLMAuthentication()
+        .Start();
+```
+
+##### Client certificate authentication
+
+You can pass `X509Certificate2` objet to the `WithCertificateAuthentication` method from certificate store or file.
+
+```csharp
+    var response = await client
+        .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+        ....
+        .WithCertificateAuthentication(new X509Certificate2(...))
         .Start();
 ```
 
