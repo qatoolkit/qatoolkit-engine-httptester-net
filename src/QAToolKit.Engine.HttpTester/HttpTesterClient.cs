@@ -9,6 +9,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -291,6 +293,30 @@ namespace QAToolKit.Engine.HttpTester
             var credentials = CredentialCache.DefaultNetworkCredentials;
             var credentialsCache = new CredentialCache { { HttpClient.BaseAddress, "NTLM", credentials } };
             HttpHandler.Credentials = credentialsCache;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Use client certificate for authentication
+        /// </summary>
+        /// <returns></returns>
+        public IHttpTesterClient WithCertificateAuthentication(X509Certificate2 certificate)
+        {
+            HttpHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) =>
+                {
+                    if (sslPolicyErrors == SslPolicyErrors.None)
+                    {
+                        return true;
+                    }
+
+                    throw new QAToolKitEngineHttpTesterException("Certificate validation failed.");
+                };
+
+            if (certificate != null)
+            {
+                HttpHandler.ClientCertificates.Add(certificate);
+            }
 
             return this;
         }

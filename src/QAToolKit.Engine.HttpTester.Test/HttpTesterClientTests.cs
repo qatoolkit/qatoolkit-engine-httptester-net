@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -52,7 +53,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                      .WithJsonBody(BicycleFixture.Get())
                      .Start();
 
-                var msg = await response.GetResponseBody<Bicycle>();
+                var msg = await response.GetResponseJsonBody<Bicycle>();
 
                 Assert.True(client.Duration < 2000);
                 Assert.True(response.IsSuccessStatusCode);
@@ -72,10 +73,10 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithPath("/api/bicycles")
                  .Start();
 
-                var msg = await response.GetResponseBody<List<Bicycle>>();
+                var msg = await response.GetResponseJsonBody<List<Bicycle>>();
 
-                var expecterResponse = BicycleFixture.GetBicycles().ToExpectedObject();
-                expecterResponse.ShouldEqual(msg);
+                var expectedResponse = BicycleFixture.GetBicycles().ToExpectedObject();
+                expectedResponse.ShouldEqual(msg);
 
                 Assert.True(client.Duration < 2000);
                 Assert.True(response.IsSuccessStatusCode);
@@ -94,10 +95,10 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithPath("/api/bicycles/1")
                  .Start();
 
-                var msg = await response.GetResponseBody<Bicycle>();
+                var msg = await response.GetResponseJsonBody<Bicycle>();
 
-                var expecterResponse = BicycleFixture.GetFoil().ToExpectedObject();
-                expecterResponse.ShouldEqual(msg);
+                var expectedResponse = BicycleFixture.GetFoil().ToExpectedObject();
+                expectedResponse.ShouldEqual(msg);
 
                 Assert.True(client.Duration < 2000);
                 Assert.True(response.IsSuccessStatusCode);
@@ -118,10 +119,10 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithPath("/api/bicycles")
                  .Start();
 
-                var msg = await response.GetResponseBody<Bicycle>();
+                var msg = await response.GetResponseJsonBody<Bicycle>();
 
-                var expecterResponse = BicycleFixture.GetCfr().ToExpectedObject();
-                expecterResponse.ShouldEqual(msg);
+                var expectedResponse = BicycleFixture.GetCfr().ToExpectedObject();
+                expectedResponse.ShouldEqual(msg);
 
                 Assert.True(client.Duration < 2000);
                 Assert.True(response.IsSuccessStatusCode);
@@ -229,10 +230,10 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithPath("/api/bicycles/1")
                  .Start();
 
-                var msg = await response.GetResponseBody<Bicycle>();
+                var msg = await response.GetResponseJsonBody<Bicycle>();
 
-                var expecterResponse = BicycleFixture.GetFoil().ToExpectedObject();
-                expecterResponse.ShouldEqual(msg);
+                var expectedResponse = BicycleFixture.GetFoil().ToExpectedObject();
+                expectedResponse.ShouldEqual(msg);
 
                 Assert.True(client.Duration < 2000);
                 Assert.True(response.IsSuccessStatusCode);
@@ -252,10 +253,33 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithPath("/api/bicycles/1")
                  .Start();
 
+                var msg = await response.GetResponseJsonBody<Bicycle>();
+
+                var expectedResponse = BicycleFixture.GetFoil().ToExpectedObject();
+                expectedResponse.ShouldEqual(msg);
+
+                Assert.True(client.Duration < 2000);
+                Assert.True(response.IsSuccessStatusCode);
+                Assert.Equal("Scott", msg.Brand);
+            }
+        }
+        
+        [Fact]
+        public async Task HttpTesterClientGetWithBodyDisableSSLValidationWithInvalidCertAndResponseBody_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                var response = await client
+                    .CreateHttpRequest(new Uri("https://swagger-demo.qatoolkit.io/"), false)
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithMethod(HttpMethod.Get)
+                    .WithPath("/api/bicycles/1")
+                    .Start();
+
                 var msg = await response.GetResponseBody<Bicycle>();
 
-                var expecterResponse = BicycleFixture.GetFoil().ToExpectedObject();
-                expecterResponse.ShouldEqual(msg);
+                var expectedResponse = BicycleFixture.GetFoil().ToExpectedObject();
+                expectedResponse.ShouldEqual(msg);
 
                 Assert.True(client.Duration < 2000);
                 Assert.True(response.IsSuccessStatusCode);
@@ -263,6 +287,26 @@ namespace QAToolKit.Engine.HttpTester.Test
             }
         }
 
+        [Fact]
+        public async Task HttpTesterClientGetWithBodyDisableSSLValidationWithInvalidCertAndResponseBytes_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                var response = await client
+                    .CreateHttpRequest(new Uri("https://swagger-demo.qatoolkit.io/"), false)
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithMethod(HttpMethod.Get)
+                    .WithPath("/api/bicycles/1")
+                    .Start();
+
+                var bytes = await response.GetResponseBodyBytes();
+
+                Assert.NotNull(bytes);
+                Assert.True(client.Duration < 2000);
+                Assert.True(response.IsSuccessStatusCode);
+            }
+        }
+        
         [Fact]
         public async Task HttpTesterClientGetWithBodyDisableSSLValidationWithHttpUrl_Exception()
         {
@@ -275,17 +319,17 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithPath("/api/bicycles/1")
                  .Start();
 
-                var msg = await response.GetResponseBody<Bicycle>();
+                var msg = await response.GetResponseJsonBody<Bicycle>();
 
-                var expecterResponse = BicycleFixture.GetFoil().ToExpectedObject();
-                expecterResponse.ShouldEqual(msg);
+                var expectedResponse = BicycleFixture.GetFoil().ToExpectedObject();
+                expectedResponse.ShouldEqual(msg);
 
                 Assert.True(client.Duration < 2000);
                 Assert.True(response.IsSuccessStatusCode);
                 Assert.Equal("Scott", msg.Brand);
             }
         }
-
+        
         [Fact]
         public async Task HttpTesterClientGetWithBodyDisableSSLValidationWithInvalidCertAndUrl2_Exception()
         {
@@ -314,7 +358,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithPath("/api/bicycles")
                  .Start();
 
-                var msg = await response.GetResponseBody<dynamic>();
+                var msg = await response.GetResponseJsonBody<dynamic>();
 
                 Assert.True(client.Duration < 2000);
                 Assert.True(response.IsSuccessStatusCode);
@@ -351,7 +395,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                    .WithMethod(HttpMethod.Post)
                    .Start();
 
-                var msg = await response.GetResponseBody<dynamic>();
+                var msg = await response.GetResponseJsonBody<dynamic>();
 
                 Assert.True(client.Duration < 2000);
                 Assert.True(response.IsSuccessStatusCode);
@@ -371,7 +415,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                    .WithBasicAuthentication("user", "pass")
                    .Start();
 
-                var msg = await response.GetResponseBody<dynamic>();
+                var msg = await response.GetResponseJsonBody<dynamic>();
 
                 Assert.True(client.Duration < 2000);
                 Assert.True(client.HttpClient.DefaultRequestHeaders.Contains("Authorization"));
@@ -392,7 +436,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                    .WithBearerAuthentication("123")
                    .Start();
 
-                var msg = await response.GetResponseBody<dynamic>();
+                var msg = await response.GetResponseJsonBody<dynamic>();
 
                 Assert.True(client.Duration < 2000);
                 Assert.True(client.HttpClient.DefaultRequestHeaders.Contains("Authorization"));
@@ -433,7 +477,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                    .WithNTLMAuthentication("user", "pass")
                    .Start();
 
-                var msg = await response.GetResponseBody<dynamic>();
+                var msg = await response.GetResponseJsonBody<dynamic>();
 
                 Assert.True(client.Duration < 2000);
                 Assert.True(response.IsSuccessStatusCode);
@@ -446,7 +490,7 @@ namespace QAToolKit.Engine.HttpTester.Test
         {
             using (var client = new HttpTesterClient())
             {
-                byte[] image = new WebClient().DownloadData("https://qatoolkit.io/assets/logo.png");
+                var image = new WebClient().DownloadData("https://qatoolkit.io/assets/logo.png");
 
                 var response = await client
                  .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
@@ -577,7 +621,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                      .WithJsonBody(BicycleFixture.Get())
                      .Start();
 
-                var msg = await response.GetResponseBody<Bicycle>();
+                var msg = await response.GetResponseJsonBody<Bicycle>();
 
                 Assert.True(client.Duration < 2000);
                 Assert.True(response.IsSuccessStatusCode);
@@ -608,10 +652,10 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .CreateHttpRequest(requests.FirstOrDefault())
                  .Start();
 
-                var msg = await response.GetResponseBody<List<Bicycle>>();
+                var msg = await response.GetResponseJsonBody<List<Bicycle>>();
 
-                var expecterResponse = BicycleFixture.GetBicycles().ToExpectedObject();
-                expecterResponse.ShouldEqual(msg);
+                var expectedResponse = BicycleFixture.GetBicycles().ToExpectedObject();
+                expectedResponse.ShouldEqual(msg);
 
                 Assert.True(client.Duration < 2000);
                 Assert.True(response.IsSuccessStatusCode);
@@ -643,10 +687,10 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
                  .Start();
 
-                var msg = await response.GetResponseBody<Bicycle>();
+                var msg = await response.GetResponseJsonBody<Bicycle>();
 
-                var expecterResponse = BicycleFixture.GetCannondale().ToExpectedObject();
-                expecterResponse.ShouldEqual(msg);
+                var expectedResponse = BicycleFixture.GetCannondale().ToExpectedObject();
+                expectedResponse.ShouldEqual(msg);
 
                 Assert.True(client.Duration < 2000);
                 Assert.True(response.IsSuccessStatusCode);
@@ -677,13 +721,27 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" }, {"bicycleType", "1" } })
                  .Start();
 
-                var msg = await response.GetResponseBody<List<Bicycle>>();
+                var msg = await response.GetResponseJsonBody<List<Bicycle>>();
 
-                var expecterResponse = BicycleFixture.GetCannondaleArray().ToExpectedObject();
-                expecterResponse.ShouldEqual(msg);
+                var expectedResponse = BicycleFixture.GetCannondaleArray().ToExpectedObject();
+                expectedResponse.ShouldEqual(msg);
 
                 Assert.True(client.Duration < 2000);
                 Assert.True(response.IsSuccessStatusCode);
+            }
+        }
+        
+        [Fact]
+        public async Task HttpTesterClientPostObjectBodyWithBlankCertificateDefaultAuthorization_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                await Assert.ThrowsAsync<HttpRequestException>(async () => await client
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
+                    .WithJsonBody(BicycleFixture.GetCfr())
+                    .WithMethod(HttpMethod.Post)
+                    .WithCertificateAuthentication(new X509Certificate2())
+                    .Start());
             }
         }
     }
