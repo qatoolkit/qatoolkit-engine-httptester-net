@@ -1,5 +1,6 @@
 ﻿using QAToolKit.Engine.HttpTester.Exceptions;
 using System;
+using System.Runtime.Serialization;
 using Xunit;
 
 namespace QAToolKit.Engine.HttpTester.Test.Exceptions

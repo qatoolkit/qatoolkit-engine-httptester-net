@@ -25,7 +25,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithPath("/api/bicycles")
                  .Start();
 
-                var msg = await response.GetResponseBody<List<Bicycle>>();
+                var msg = await response.GetResponseJsonBody<List<Bicycle>>();
 
                 var asserter = new HttpTestAsserter(response);
 
@@ -56,7 +56,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithPath("/api/bicycles")
                  .Start();
 
-                var msg = await response.GetResponseBody<List<Bicycle>>();
+                var msg = await response.GetResponseJsonBody<List<Bicycle>>();
 
                 var asserter = new HttpTestAsserter(response);
 
@@ -83,7 +83,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithPath("/api/bicycles")
                  .Start();
 
-                var msg = await response.GetResponseBody<List<Bicycle>>();
+                var msg = await response.GetResponseJsonBody<List<Bicycle>>();
 
                 var asserter = new HttpTestAsserter(response);
 
@@ -110,7 +110,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithPath("/api/bicycles")
                  .Start();
 
-                var msg = await response.GetResponseBody<List<Bicycle>>();
+                var msg = await response.GetResponseJsonBody<List<Bicycle>>();
 
                 var asserter = new HttpTestAsserter(response);
 
@@ -138,7 +138,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithPath("/api/bicycles")
                  .Start();
 
-                var msg = await response.GetResponseBody<List<Bicycle>>();
+                var msg = await response.GetResponseJsonBody<List<Bicycle>>();
 
                 var asserter = new HttpTestAsserter(response);
 
@@ -163,7 +163,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                  .WithPath("/api/bicycles")
                  .Start();
 
-                var msg = await response.GetResponseBody<List<Bicycle>>();
+                var msg = await response.GetResponseJsonBody<List<Bicycle>>();
 
                 var asserter = new HttpTestAsserter(response);
                 var duration = client.Duration;
