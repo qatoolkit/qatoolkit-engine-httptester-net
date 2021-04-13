@@ -196,6 +196,18 @@ Currently `HttpTesterClient` supports:
         .Start();
 ```
 
+##### Client certificate authentication
+
+You can pass `X509Certificate2` objet to the `WithCertificateAuthentication` method from certificate store or file.
+
+```csharp
+    var response = await client
+        .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+        ....
+        .WithCertificateAuthentication(new X509Certificate2(...))
+        .Start();
+```
+
 ### HttpTestAsserter
 
 This is an implementation of the HTTP response message asserter, which can be used to assert different parameters.
