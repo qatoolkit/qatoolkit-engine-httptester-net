@@ -27,7 +27,7 @@ jobs:
     - name: Clean
       run: dotnet clean --configuration Release && dotnet nuget locals all --clear
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore .\qatoolkit-engine-httptester-net.sln
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
