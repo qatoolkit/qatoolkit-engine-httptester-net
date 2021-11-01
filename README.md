@@ -213,12 +213,13 @@ You can pass `X509Certificate2` objet to the `WithCertificateAuthentication` met
 This is an implementation of the HTTP response message asserter, which can be used to assert different parameters.
 
 Here is a list of Asserters:
-- `ResponseContentContains`: HTTP body contains a string (ignores case)
-- `RequestDurationEquals`: Verify request duration
-- `ResponseStatusCodeEquals`: Verify if response code equals
-- `ResponseHasHttpHeader`: HTTP response contains a header
-- `ResponseStatusCodeIsSuccess`: HTTP response status code is one of 2xx
-- `ResponseBodyIsEmpty`: HTTP response body is empty
+- `ResponseContentContains`: HTTP body contains a string (ignores case).
+- `RequestDurationEquals`: Verify request duration.
+- `ResponseStatusCodeEquals`: Verify if response code equals to specified.
+- `ResponseHasHttpHeader`: HTTP response contains a header.
+- `ResponseStatusCodeIsSuccess`: HTTP response status code is one of 2xx.
+- `ResponseBodyIsEmpty`: HTTP response body is empty.
+- `ResponseContentTypeEquals`: Check if HTTP response media type equals to specified.
 
 Asserter produces a list of `AssertResult`:
 
