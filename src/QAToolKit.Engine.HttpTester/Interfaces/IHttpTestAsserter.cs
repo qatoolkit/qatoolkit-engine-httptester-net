@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http.Headers;
 
 namespace QAToolKit.Engine.HttpTester.Interfaces
 {
@@ -46,6 +47,12 @@ namespace QAToolKit.Engine.HttpTester.Interfaces
         /// </summary>
         /// <returns></returns>
         IHttpTestAsserter ResponseBodyIsEmpty();
+        /// <summary>
+        /// Check if the response contains specified Content Type
+        /// </summary>
+        /// <param name="contentType"></param>
+        /// <returns></returns>
+        IHttpTestAsserter ResponseContentTypeEquals(string contentType);
         /// <summary>
         /// Return all Assert messages of the Asserter
         /// </summary>
