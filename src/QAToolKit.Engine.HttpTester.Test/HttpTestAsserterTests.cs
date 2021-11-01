@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Xunit;
@@ -34,6 +35,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                     .ResponseContentContains("scott")
                     .RequestDurationEquals(duration, (x) => x < 2000)
                     .ResponseStatusCodeEquals(HttpStatusCode.OK)
+                    .ResponseContentTypeEquals("application/json")
                     .ResponseHasHttpHeader("Date")
                     .AssertAll();
 
@@ -121,6 +123,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                     .RequestDurationEquals(duration, (x) => x < 2000)
                     .RequestDurationEquals(httpDuration, (x) => x < 1800)
                     .ResponseStatusCodeEquals(HttpStatusCode.OK)
+                    .ResponseContentTypeEquals("application/json")
                     .ResponseHasHttpHeader(null)
                     .AssertAll());
             }
@@ -146,6 +149,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                 Assert.Throws<ArgumentNullException>(() => asserter
                     .ResponseContentContains(null)
                     .RequestDurationEquals(duration, (x) => x < 1000)
+                    .ResponseContentTypeEquals("application/json")
                     .ResponseStatusCodeEquals(HttpStatusCode.OK)
                     .AssertAll());
             }
@@ -172,10 +176,11 @@ namespace QAToolKit.Engine.HttpTester.Test
                     .ResponseContentContains("id")
                     .RequestDurationEquals(duration, (x) => (x > 100 && x < 1000))
                     .ResponseStatusCodeEquals(HttpStatusCode.OK)
+                    .ResponseContentTypeEquals("application/json")
                     .ResponseStatusCodeIsSuccess()
                     .AssertAll();
 
-                Assert.Equal(5, assertResults.ToList().Count);
+                Assert.Equal(6, assertResults.ToList().Count);
                 foreach (var result in assertResults)
                 {
                     Assert.True(result.IsTrue, result.Message);

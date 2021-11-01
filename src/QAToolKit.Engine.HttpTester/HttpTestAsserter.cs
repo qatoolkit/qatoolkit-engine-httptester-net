@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Mime;
 
 namespace QAToolKit.Engine.HttpTester
 {
@@ -55,6 +57,31 @@ namespace QAToolKit.Engine.HttpTester
                 Name = nameof(ResponseContentContains),
                 Message = $"Body contains '{keyword}'.",
                 IsTrue = caseInsensitive ? StringHelper.ContainsCaseInsensitive(bodyString, keyword) : bodyString.Contains(keyword)
+            });
+
+            return this;
+        }
+        
+        /// <summary>
+        /// Check if the response contains specified Content Type
+        /// </summary>
+        /// <param name="contentType"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public IHttpTestAsserter ResponseContentTypeEquals(string contentType)
+        {
+            if (contentType == null)
+            {
+                throw new ArgumentNullException($"{nameof(contentType)} is null.");
+            }
+
+            var bodyString = _httpResponseMessage.Content.Headers.ContentType;
+  
+            _assertResults.Add(new AssertResult()
+            {
+                Name = nameof(ResponseContentTypeEquals),
+                Message = $"Response content-type equals '{contentType}'.",
+                IsTrue = _httpResponseMessage.Content.Headers.ContentType.MediaType == contentType
             });
 
             return this;
