@@ -5,13 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace QAToolKit.Engine.HttpTester.Test
-{
+{ 
     public class HttpTestAsserterTests
     {
         [Fact]
@@ -120,7 +118,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                 var httpDuration = client.HttpDuration;
                 Assert.Throws<ArgumentNullException>(() => asserter
                     .ResponseContentContains("scott")
-                    .RequestDurationEquals(duration, (x) => x < 2000)
+                    .RequestDurationEquals(duration, (x) => x < Convert.ToInt64("2000"), "x < 2000")
                     .RequestDurationEquals(httpDuration, (x) => x < 1800)
                     .ResponseStatusCodeEquals(HttpStatusCode.OK)
                     .ResponseContentTypeEquals("application/json")
