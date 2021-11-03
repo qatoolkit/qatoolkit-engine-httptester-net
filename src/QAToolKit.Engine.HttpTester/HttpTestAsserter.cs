@@ -3,6 +3,7 @@ using QAToolKit.Engine.HttpTester.Interfaces;
 using QAToolKit.Engine.HttpTester.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -24,7 +25,8 @@ namespace QAToolKit.Engine.HttpTester
         /// <param name="httpResponseMessage"></param>
         public HttpTestAsserter(HttpResponseMessage httpResponseMessage)
         {
-            _httpResponseMessage = httpResponseMessage ?? throw new ArgumentNullException($"{nameof(httpResponseMessage)} is null.");
+            _httpResponseMessage = httpResponseMessage ??
+                                   throw new ArgumentNullException($"{nameof(httpResponseMessage)} is null.");
             _assertResults = new List<AssertResult>();
         }
 
@@ -40,8 +42,8 @@ namespace QAToolKit.Engine.HttpTester
         /// <summary>
         /// HTTP body contains a string (ignores case)
         /// </summary>
-        /// <param name="keyword"></param>
-        /// <param name="caseInsensitive"></param>
+        /// <param name="keyword">Check if the HTTP response body contains a keyword.</param>
+        /// <param name="caseInsensitive">Use case sensitive string comparison.</param>
         /// <returns></returns>
         public IHttpTestAsserter ResponseContentContains(string keyword, bool caseInsensitive = true)
         {
@@ -52,20 +54,27 @@ namespace QAToolKit.Engine.HttpTester
 
             var bodyString = _httpResponseMessage.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
-            _assertResults.Add(new AssertResult()
+            var assertResult = new AssertResult()
             {
-                Name = nameof(ResponseContentContains),
-                Message = $"Body contains '{keyword}'.",
-                IsTrue = caseInsensitive ? StringHelper.ContainsCaseInsensitive(bodyString, keyword) : bodyString.Contains(keyword)
-            });
+                Name = nameof(ResponseContentContains)
+            };
+
+            assertResult.IsTrue = caseInsensitive
+                ? StringHelper.ContainsCaseInsensitive(bodyString, keyword)
+                : bodyString.Contains(keyword);
+            assertResult.Message = assertResult.IsTrue
+                ? $"Response body contains keyword '{keyword}'."
+                : $"Response body does not contain keyword '{keyword}'.";
+
+            _assertResults.Add(assertResult);
 
             return this;
         }
-        
+
         /// <summary>
         /// Check if the response contains specified Content Type
         /// </summary>
-        /// <param name="contentType"></param>
+        /// <param name="contentType">Check if the response content type equals the parameter.</param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         public IHttpTestAsserter ResponseContentTypeEquals(string contentType)
@@ -75,12 +84,12 @@ namespace QAToolKit.Engine.HttpTester
                 throw new ArgumentNullException($"{nameof(contentType)} is null.");
             }
 
-            var bodyString = _httpResponseMessage.Content.Headers.ContentType;
-  
+            var responseContentType = _httpResponseMessage.Content.Headers.ContentType.MediaType;
+
             _assertResults.Add(new AssertResult()
             {
                 Name = nameof(ResponseContentTypeEquals),
-                Message = $"Response content-type equals '{contentType}'.",
+                Message = $"Expected content-type = '{contentType}', actual = '{responseContentType}'.",
                 IsTrue = _httpResponseMessage.Content.Headers.ContentType.MediaType == contentType
             });
 
@@ -90,18 +99,44 @@ namespace QAToolKit.Engine.HttpTester
         /// <summary>
         /// Verify request duration
         /// </summary>
-        /// <param name="duration"></param>
-        /// <param name="predicateFunction"></param>
+        /// <param name="duration">Actual duration of the HTTP request execution</param>
+        /// <param name="predicateFunction">It's a function that validates the duration</param>
+        /// <param name="predicateFunctionExpression">String predicateFunctionExpression for the report. If set it will be used in the assert result message.</param>
         /// <returns></returns>
-        public IHttpTestAsserter RequestDurationEquals(long duration, Func<long, bool> predicateFunction)
+        public IHttpTestAsserter RequestDurationEquals(long duration, Expression<Func<long, bool>> predicateFunction, string predicateFunctionExpression = null)
         {
-            var isTrue = predicateFunction.Invoke(duration);
-            _assertResults.Add(new AssertResult()
+            var isTrue = predicateFunction.Compile()(duration);
+
+            var assertResult = new AssertResult()
             {
                 Name = nameof(RequestDurationEquals),
-                Message = $"Duration is '{duration}'.",
                 IsTrue = isTrue
-            });
+            };
+
+            if (isTrue)
+            {
+                if (string.IsNullOrEmpty(predicateFunctionExpression))
+                {
+                    assertResult.Message = $"Duration is '{duration}ms' and is valid.";
+                }
+                else
+                {
+                    assertResult.Message = $"Duration is '{duration}ms' and is valid with predicateFunctionExpression '{predicateFunctionExpression}'.";
+                }
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(predicateFunctionExpression))
+                {
+                    assertResult.Message = $"Duration is '{duration}ms' and is invalid.";
+                }
+                else
+                {
+                    assertResult.Message = $"Duration is '{duration}ms' and is invalid with predicateFunctionExpression '{predicateFunctionExpression}'.";
+                }
+            }
+            
+            _assertResults.Add(assertResult);
 
             return this;
         }
@@ -109,7 +144,7 @@ namespace QAToolKit.Engine.HttpTester
         /// <summary>
         /// HTTP response contains a header
         /// </summary>
-        /// <param name="headerName"></param>
+        /// <param name="headerName">Check if the HTTP response contains the header with the name.</param>
         /// <returns></returns>
         public IHttpTestAsserter ResponseHasHttpHeader(string headerName)
         {
@@ -118,12 +153,17 @@ namespace QAToolKit.Engine.HttpTester
                 throw new ArgumentNullException($"{nameof(headerName)} is null.");
             }
 
-            _assertResults.Add(new AssertResult()
+            var assertResult = new AssertResult
             {
                 Name = nameof(ResponseHasHttpHeader),
-                Message = $"Contains header '{headerName}'.",
                 IsTrue = _httpResponseMessage.Headers.TryGetValues(headerName, out var values)
-            });
+            };
+
+            assertResult.Message = assertResult.IsTrue
+                ? $"Response message contains header '{headerName}'."
+                : $"Response message does not contain header '{headerName}'.";
+
+            _assertResults.Add(assertResult);
 
             return this;
         }
@@ -131,14 +171,15 @@ namespace QAToolKit.Engine.HttpTester
         /// <summary>
         /// Verify if response code equals
         /// </summary>
-        /// <param name="httpStatusCode"></param>
+        /// <param name="httpStatusCode">Check if the HTTP response status code equals to this parameter.</param>
         /// <returns></returns>
         public IHttpTestAsserter ResponseStatusCodeEquals(HttpStatusCode httpStatusCode)
         {
             _assertResults.Add(new AssertResult()
             {
                 Name = nameof(ResponseStatusCodeEquals),
-                Message = $"Expected status code is '{httpStatusCode}' return code is '{_httpResponseMessage.StatusCode}'.",
+                Message =
+                    $"Expected status code = '{httpStatusCode}', actual = '{_httpResponseMessage.StatusCode}'.",
                 IsTrue = _httpResponseMessage.StatusCode == httpStatusCode
             });
 
@@ -154,7 +195,7 @@ namespace QAToolKit.Engine.HttpTester
             _assertResults.Add(new AssertResult()
             {
                 Name = nameof(ResponseStatusCodeIsSuccess),
-                Message = $"Expected status code is '2xx' return code is '{_httpResponseMessage.StatusCode}'.",
+                Message = $"Expected status code = '2xx', actual = '{_httpResponseMessage.StatusCode}'.",
                 IsTrue = _httpResponseMessage.IsSuccessStatusCode
             });
 
@@ -172,7 +213,7 @@ namespace QAToolKit.Engine.HttpTester
             _assertResults.Add(new AssertResult()
             {
                 Name = nameof(ResponseBodyIsEmpty),
-                Message = $"Expected empty body, returned body is '{bodyString}'.",
+                Message = $"Expected empty response body, actual = '{bodyString}'.",
                 IsTrue = string.IsNullOrEmpty(bodyString)
             });
 

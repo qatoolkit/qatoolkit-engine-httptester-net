@@ -1,6 +1,7 @@
 ﻿using QAToolKit.Engine.HttpTester.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Http.Headers;
 
@@ -18,13 +19,15 @@ namespace QAToolKit.Engine.HttpTester.Interfaces
         /// <param name="caseInsensitive"></param>
         /// <returns></returns>
         IHttpTestAsserter ResponseContentContains(string keyword, bool caseInsensitive = true);
+
         /// <summary>
         /// Verify request duration
         /// </summary>
         /// <param name="duration"></param>
         /// <param name="predicateFunction"></param>
+        /// <param name="predicateFunctionExpression"></param>
         /// <returns></returns>
-        IHttpTestAsserter RequestDurationEquals(long duration, Func<long, bool> predicateFunction);
+        IHttpTestAsserter RequestDurationEquals(long duration, Expression<Func<long, bool>> predicateFunction, string predicateFunctionExpression = null);
         /// <summary>
         /// Verify if response code equals
         /// </summary>
