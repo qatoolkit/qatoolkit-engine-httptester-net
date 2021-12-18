@@ -31,27 +31,27 @@ namespace QAToolKit.Engine.HttpTester.Test
                 options.UseSwaggerExampleValues = true;
             });
 
-            var requests = await urlSource.Load(new Uri[] {
+            var requests = await urlSource.Load(new Uri[]
+            {
                 new Uri("https://qatoolkitapi.azurewebsites.net/swagger/v1/swagger.json")
             });
 
-            var replacementValues = new Dictionary<string, object> {
-                { "api-version", 1}
-              };
-
-            var urlGenerator = new HttpRequestUrlGenerator(requests.FirstOrDefault(), options =>
+            var replacementValues = new Dictionary<string, object>
             {
-                options.AddReplacementValues(replacementValues);
-            });
+                { "api-version", 1 }
+            };
+
+            var urlGenerator = new HttpRequestUrlGenerator(requests.FirstOrDefault(),
+                options => { options.AddReplacementValues(replacementValues); });
 
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                     .CreateHttpRequest(new Uri(urlGenerator.GetUrl()))
-                     .WithHeaders(new Dictionary<string, string>() { { "Content-Type", "application/json" } })
-                     .WithMethod(HttpMethod.Post)
-                     .WithJsonBody(BicycleFixture.Get())
-                     .Start();
+                    .CreateHttpRequest(new Uri(urlGenerator.GetUrl()))
+                    .WithHeaders(new Dictionary<string, string>() { { "Content-Type", "application/json" } })
+                    .WithMethod(HttpMethod.Post)
+                    .WithJsonBody(BicycleFixture.Get())
+                    .Start();
 
                 var msg = await response.GetResponseJsonBody<Bicycle>();
 
@@ -67,11 +67,11 @@ namespace QAToolKit.Engine.HttpTester.Test
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
-                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
-                 .WithMethod(HttpMethod.Get)
-                 .WithPath("/api/bicycles")
-                 .Start();
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithMethod(HttpMethod.Get)
+                    .WithPath("/api/bicycles")
+                    .Start();
 
                 var msg = await response.GetResponseJsonBody<List<Bicycle>>();
 
@@ -89,11 +89,11 @@ namespace QAToolKit.Engine.HttpTester.Test
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
-                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
-                 .WithMethod(HttpMethod.Get)
-                 .WithPath("/api/bicycles/1")
-                 .Start();
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithMethod(HttpMethod.Get)
+                    .WithPath("/api/bicycles/1")
+                    .Start();
 
                 var msg = await response.GetResponseJsonBody<Bicycle>();
 
@@ -112,12 +112,12 @@ namespace QAToolKit.Engine.HttpTester.Test
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
-                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
-                 .WithMethod(HttpMethod.Post)
-                 .WithJsonBody(BicycleFixture.GetCfr())
-                 .WithPath("/api/bicycles")
-                 .Start();
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithMethod(HttpMethod.Post)
+                    .WithJsonBody(BicycleFixture.GetCfr())
+                    .WithPath("/api/bicycles")
+                    .Start();
 
                 var msg = await response.GetResponseJsonBody<Bicycle>();
 
@@ -136,12 +136,12 @@ namespace QAToolKit.Engine.HttpTester.Test
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
-                 .WithHeaders(new Dictionary<string, string>() { { "Content-Type", "application/json" } })
-                 .WithMethod(HttpMethod.Post)
-                 .WithJsonBody(BicycleFixture.Get())
-                 .WithPath("/api/bicycles")
-                 .Start();
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                    .WithHeaders(new Dictionary<string, string>() { { "Content-Type", "application/json" } })
+                    .WithMethod(HttpMethod.Post)
+                    .WithJsonBody(BicycleFixture.Get())
+                    .WithPath("/api/bicycles")
+                    .Start();
 
                 Assert.True(client.Duration < 2000);
                 Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -154,12 +154,12 @@ namespace QAToolKit.Engine.HttpTester.Test
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
-                 .WithHeaders(new Dictionary<string, string>() { { "Content-Type", "application/json" } })
-                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
-                 .WithMethod(HttpMethod.Post)
-                 .WithJsonBody(BicycleFixture.Get())
-                 .Start();
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                    .WithHeaders(new Dictionary<string, string>() { { "Content-Type", "application/json" } })
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithMethod(HttpMethod.Post)
+                    .WithJsonBody(BicycleFixture.Get())
+                    .Start();
 
                 Assert.True(client.Duration < 2000);
                 Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -172,10 +172,10 @@ namespace QAToolKit.Engine.HttpTester.Test
             using (var client = new HttpTesterClient())
             {
                 var response = client
-                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
-                 .WithHeaders(new Dictionary<string, string>() { { "Content-Type", "application/json" } })
-                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
-                 .WithJsonBody(BicycleFixture.Get());
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                    .WithHeaders(new Dictionary<string, string>() { { "Content-Type", "application/json" } })
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithJsonBody(BicycleFixture.Get());
 
                 await Assert.ThrowsAsync<QAToolKitEngineHttpTesterException>(async () => await client.Start());
             }
@@ -187,11 +187,11 @@ namespace QAToolKit.Engine.HttpTester.Test
             using (var client = new HttpTesterClient())
             {
                 var response = client
-                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
-                 .WithHeaders(new Dictionary<string, string>() { { "Content-Type", "application/json" } })
-                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
-                 .WithMethod(HttpMethod.Get)
-                 .WithJsonBody(BicycleFixture.Get());
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                    .WithHeaders(new Dictionary<string, string>() { { "Content-Type", "application/json" } })
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithMethod(HttpMethod.Get)
+                    .WithJsonBody(BicycleFixture.Get());
 
                 await Assert.ThrowsAsync<QAToolKitEngineHttpTesterException>(async () => await client.Start());
             }
@@ -203,7 +203,7 @@ namespace QAToolKit.Engine.HttpTester.Test
             using (var client = new HttpTesterClient())
             {
                 var response = client
-                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"));
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"));
 
                 await Assert.ThrowsAsync<QAToolKitEngineHttpTesterException>(async () => await client.Start());
             }
@@ -224,11 +224,11 @@ namespace QAToolKit.Engine.HttpTester.Test
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"), false)
-                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
-                 .WithMethod(HttpMethod.Get)
-                 .WithPath("/api/bicycles/1")
-                 .Start();
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"), false)
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithMethod(HttpMethod.Get)
+                    .WithPath("/api/bicycles/1")
+                    .Start();
 
                 var msg = await response.GetResponseJsonBody<Bicycle>();
 
@@ -247,11 +247,11 @@ namespace QAToolKit.Engine.HttpTester.Test
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                 .CreateHttpRequest(new Uri("https://swagger-demo.qatoolkit.io/"), false)
-                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
-                 .WithMethod(HttpMethod.Get)
-                 .WithPath("/api/bicycles/1")
-                 .Start();
+                    .CreateHttpRequest(new Uri("https://swagger-demo.qatoolkit.io/"), false)
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithMethod(HttpMethod.Get)
+                    .WithPath("/api/bicycles/1")
+                    .Start();
 
                 var msg = await response.GetResponseJsonBody<Bicycle>();
 
@@ -263,7 +263,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                 Assert.Equal("Scott", msg.Brand);
             }
         }
-        
+
         [Fact]
         public async Task HttpTesterClientGetWithBodyDisableSSLValidationWithInvalidCertAndResponseBody_Success()
         {
@@ -306,18 +306,18 @@ namespace QAToolKit.Engine.HttpTester.Test
                 Assert.True(response.IsSuccessStatusCode);
             }
         }
-        
+
         [Fact]
         public async Task HttpTesterClientGetWithBodyDisableSSLValidationWithHttpUrl_Exception()
         {
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                 .CreateHttpRequest(new Uri("http://swagger-demo.qatoolkit.io/"), false)
-                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
-                 .WithMethod(HttpMethod.Get)
-                 .WithPath("/api/bicycles/1")
-                 .Start();
+                    .CreateHttpRequest(new Uri("http://swagger-demo.qatoolkit.io/"), false)
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithMethod(HttpMethod.Get)
+                    .WithPath("/api/bicycles/1")
+                    .Start();
 
                 var msg = await response.GetResponseJsonBody<Bicycle>();
 
@@ -329,17 +329,17 @@ namespace QAToolKit.Engine.HttpTester.Test
                 Assert.Equal("Scott", msg.Brand);
             }
         }
-        
+
         [Fact]
         public async Task HttpTesterClientGetWithBodyDisableSSLValidationWithInvalidCertAndUrl2_Exception()
         {
             using (var client = new HttpTesterClient())
             {
                 var response = client
-                 .CreateHttpRequest(new Uri("http://swagger-demo.qatoolkit.io/"), true)
-                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
-                 .WithMethod(HttpMethod.Get)
-                 .WithPath("/api/bicycles/1");
+                    .CreateHttpRequest(new Uri("http://swagger-demo.qatoolkit.io/"), true)
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithMethod(HttpMethod.Get)
+                    .WithPath("/api/bicycles/1");
 
                 await Assert.ThrowsAsync<HttpRequestException>(async () => await client.Start());
             }
@@ -351,12 +351,12 @@ namespace QAToolKit.Engine.HttpTester.Test
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
-                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
-                 .WithMethod(HttpMethod.Post)
-                 .WithJsonBody(BicycleFixture.GetCfr())
-                 .WithPath("/api/bicycles")
-                 .Start();
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithMethod(HttpMethod.Post)
+                    .WithJsonBody(BicycleFixture.GetCfr())
+                    .WithPath("/api/bicycles")
+                    .Start();
 
                 var msg = await response.GetResponseJsonBody<dynamic>();
 
@@ -372,10 +372,10 @@ namespace QAToolKit.Engine.HttpTester.Test
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                   .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
-                   .WithJsonBody("{\"id\": 5,\"name\":\"EXCEED CFR\",\"brand\":\"Giant\",\"type\":2}")
-                   .WithMethod(HttpMethod.Post)
-                   .Start();
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
+                    .WithJsonBody("{\"id\": 5,\"name\":\"EXCEED CFR\",\"brand\":\"Giant\",\"type\":2}")
+                    .WithMethod(HttpMethod.Post)
+                    .Start();
 
                 var msg = await response.GetResponseBodyString();
 
@@ -390,10 +390,10 @@ namespace QAToolKit.Engine.HttpTester.Test
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                   .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
-                   .WithJsonBody(BicycleFixture.GetCfr())
-                   .WithMethod(HttpMethod.Post)
-                   .Start();
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
+                    .WithJsonBody(BicycleFixture.GetCfr())
+                    .WithMethod(HttpMethod.Post)
+                    .Start();
 
                 var msg = await response.GetResponseJsonBody<dynamic>();
 
@@ -409,11 +409,11 @@ namespace QAToolKit.Engine.HttpTester.Test
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                   .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
-                   .WithJsonBody(BicycleFixture.GetCfr())
-                   .WithMethod(HttpMethod.Post)
-                   .WithBasicAuthentication("user", "pass")
-                   .Start();
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
+                    .WithJsonBody(BicycleFixture.GetCfr())
+                    .WithMethod(HttpMethod.Post)
+                    .WithBasicAuthentication("user", "pass")
+                    .Start();
 
                 var msg = await response.GetResponseJsonBody<dynamic>();
 
@@ -430,11 +430,11 @@ namespace QAToolKit.Engine.HttpTester.Test
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                   .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
-                   .WithJsonBody(BicycleFixture.GetCfr())
-                   .WithMethod(HttpMethod.Post)
-                   .WithBearerAuthentication("123")
-                   .Start();
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
+                    .WithJsonBody(BicycleFixture.GetCfr())
+                    .WithMethod(HttpMethod.Post)
+                    .WithBearerAuthentication("123")
+                    .Start();
 
                 var msg = await response.GetResponseJsonBody<dynamic>();
 
@@ -451,11 +451,11 @@ namespace QAToolKit.Engine.HttpTester.Test
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                   .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
-                   .WithJsonBody(BicycleFixture.GetCfr())
-                   .WithMethod(HttpMethod.Post)
-                   .WithNTLMAuthentication()
-                   .Start();
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
+                    .WithJsonBody(BicycleFixture.GetCfr())
+                    .WithMethod(HttpMethod.Post)
+                    .WithNTLMAuthentication()
+                    .Start();
 
                 var msg = await response.GetResponseJsonBody<dynamic>();
 
@@ -471,11 +471,11 @@ namespace QAToolKit.Engine.HttpTester.Test
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                   .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
-                   .WithJsonBody(BicycleFixture.GetCfr())
-                   .WithMethod(HttpMethod.Post)
-                   .WithNTLMAuthentication("user", "pass")
-                   .Start();
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net/api/bicycles?api-version=1"))
+                    .WithJsonBody(BicycleFixture.GetCfr())
+                    .WithMethod(HttpMethod.Post)
+                    .WithNTLMAuthentication("user", "pass")
+                    .Start();
 
                 var msg = await response.GetResponseJsonBody<dynamic>();
 
@@ -493,13 +493,13 @@ namespace QAToolKit.Engine.HttpTester.Test
                 var image = new WebClient().DownloadData("https://qatoolkit.io/assets/logo.png");
 
                 var response = await client
-                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
-                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
-                 .WithMethod(HttpMethod.Post)
-                 .WithPath("/api/bicycles/1/images")
-                 .WithMultipart(image, "FileContent", "logo.png")
-                 .WithMultipart("FileName", "miha.txt")
-                 .Start();
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
+                    .WithMethod(HttpMethod.Post)
+                    .WithPath("/api/bicycles/1/images")
+                    .WithMultipart(image, "FileContent", "logo.png")
+                    .WithMultipart("FileName", "miha.txt")
+                    .Start();
 
                 var msg = await response.GetResponseBodyString();
 
@@ -516,13 +516,13 @@ namespace QAToolKit.Engine.HttpTester.Test
                 byte[] image = new WebClient().DownloadData("https://qatoolkit.io/assets/logo.png");
 
                 var response = await client
-                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
-                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
-                 .WithMethod(HttpMethod.Post)
-                 .WithPath("/api/bicycles/1/images")
-                 .WithMultipart(image, "FileContent", "logo.png")
-                 .WithMultipart("FileName", "miha.txt")
-                 .Start();
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
+                    .WithMethod(HttpMethod.Post)
+                    .WithPath("/api/bicycles/1/images")
+                    .WithMultipart(image, "FileContent", "logo.png")
+                    .WithMultipart("FileName", "miha.txt")
+                    .Start();
 
                 var msg = await response.GetResponseBodyString();
 
@@ -539,15 +539,15 @@ namespace QAToolKit.Engine.HttpTester.Test
                 byte[] image = new WebClient().DownloadData("https://qatoolkit.io/assets/logo.png");
 
                 var response = await client
-                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
-                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
-                 .WithMethod(HttpMethod.Post)
-                 .WithPath("/api/bicycles/1/brochures")
-                 .WithMultipart(image, "Image.FileContent", "logo.png")
-                 .WithMultipart("Image.FileName", "miha.txt")
-                 .WithMultipart("Metadata.Year", "2000")
-                 .WithMultipart("Metadata.Name", "Brochure 2000")
-                 .Start();
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
+                    .WithMethod(HttpMethod.Post)
+                    .WithPath("/api/bicycles/1/brochures")
+                    .WithMultipart(image, "Image.FileContent", "logo.png")
+                    .WithMultipart("Image.FileName", "miha.txt")
+                    .WithMultipart("Metadata.Year", "2000")
+                    .WithMultipart("Metadata.Name", "Brochure 2000")
+                    .Start();
 
                 var msg = await response.GetResponseBodyString();
 
@@ -564,13 +564,14 @@ namespace QAToolKit.Engine.HttpTester.Test
                 byte[] image = new WebClient().DownloadData("https://qatoolkit.io/assets/logo.png");
 
                 var response = client
-                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
-                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
-                 .WithMethod(HttpMethod.Post)
-                 .WithPath("/api/bicycles/1/brochures")
-                 .WithJsonBody<string>("1234");
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
+                    .WithMethod(HttpMethod.Post)
+                    .WithPath("/api/bicycles/1/brochures")
+                    .WithJsonBody<string>("1234");
 
-                var exception = Assert.Throws<QAToolKitEngineHttpTesterException>(() => client.WithMultipart(image, "Image.FileContent", "logo.png"));
+                var exception = Assert.Throws<QAToolKitEngineHttpTesterException>(() =>
+                    client.WithMultipart(image, "Image.FileContent", "logo.png"));
                 Assert.StartsWith("Body application/json already defined on", exception.Message);
             }
         }
@@ -583,16 +584,17 @@ namespace QAToolKit.Engine.HttpTester.Test
                 byte[] image = new WebClient().DownloadData("https://qatoolkit.io/assets/logo.png");
 
                 var response = client
-                 .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
-                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
-                 .WithMethod(HttpMethod.Post)
-                 .WithPath("/api/bicycles/1/brochures")
-                 .WithMultipart(image, "Image.FileContent", "logo.png")
-                 .WithMultipart("Image.FileName", "miha.txt")
-                 .WithMultipart("Metadata.Year", "2000")
-                 .WithMultipart("Metadata.Name", "Brochure 2000");
+                    .CreateHttpRequest(new Uri("https://qatoolkitapi.azurewebsites.net"))
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
+                    .WithMethod(HttpMethod.Post)
+                    .WithPath("/api/bicycles/1/brochures")
+                    .WithMultipart(image, "Image.FileContent", "logo.png")
+                    .WithMultipart("Image.FileName", "miha.txt")
+                    .WithMultipart("Metadata.Year", "2000")
+                    .WithMultipart("Metadata.Name", "Brochure 2000");
 
-                var exception = Assert.Throws<QAToolKitEngineHttpTesterException>(() => client.WithJsonBody<string>("1234"));
+                var exception =
+                    Assert.Throws<QAToolKitEngineHttpTesterException>(() => client.WithJsonBody<string>("1234"));
                 Assert.StartsWith("Body multipart/form-data already defined", exception.Message);
             }
         }
@@ -610,16 +612,17 @@ namespace QAToolKit.Engine.HttpTester.Test
                 options.UseSwaggerExampleValues = true;
             });
 
-            var requests = await urlSource.Load(new Uri[] {
+            var requests = await urlSource.Load(new Uri[]
+            {
                 new Uri("https://qatoolkitapi.azurewebsites.net/swagger/v2/swagger.json")
             });
 
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                     .CreateHttpRequest(requests.FirstOrDefault())
-                     .WithJsonBody(BicycleFixture.Get())
-                     .Start();
+                    .CreateHttpRequest(requests.FirstOrDefault())
+                    .WithJsonBody(BicycleFixture.Get())
+                    .Start();
 
                 var msg = await response.GetResponseJsonBody<Bicycle>();
 
@@ -642,15 +645,16 @@ namespace QAToolKit.Engine.HttpTester.Test
                 options.UseSwaggerExampleValues = true;
             });
 
-            var requests = await urlSource.Load(new Uri[] {
+            var requests = await urlSource.Load(new Uri[]
+            {
                 new Uri("https://qatoolkitapi.azurewebsites.net/swagger/v2/swagger.json")
             });
 
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                 .CreateHttpRequest(requests.FirstOrDefault())
-                 .Start();
+                    .CreateHttpRequest(requests.FirstOrDefault())
+                    .Start();
 
                 var msg = await response.GetResponseJsonBody<List<Bicycle>>();
 
@@ -675,17 +679,18 @@ namespace QAToolKit.Engine.HttpTester.Test
                 options.UseSwaggerExampleValues = true;
             });
 
-            var requests = await urlSource.Load(new Uri[] {
+            var requests = await urlSource.Load(new Uri[]
+            {
                 new Uri("https://qatoolkitapi.azurewebsites.net/swagger/v2/swagger.json")
             });
 
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                 .CreateHttpRequest(requests.FirstOrDefault())
-                 .WithPathReplacementValues(new Dictionary<string, string>() { { "id", "2" } })
-                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
-                 .Start();
+                    .CreateHttpRequest(requests.FirstOrDefault())
+                    .WithPathReplacementValues(new Dictionary<string, string>() { { "id", "2" } })
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" } })
+                    .Start();
 
                 var msg = await response.GetResponseJsonBody<Bicycle>();
 
@@ -710,16 +715,18 @@ namespace QAToolKit.Engine.HttpTester.Test
                 options.UseSwaggerExampleValues = true;
             });
 
-            var requests = await urlSource.Load(new Uri[] {
+            var requests = await urlSource.Load(new Uri[]
+            {
                 new Uri("https://qatoolkitapi.azurewebsites.net/swagger/v2/swagger.json")
             });
 
             using (var client = new HttpTesterClient())
             {
                 var response = await client
-                 .CreateHttpRequest(requests.FirstOrDefault())
-                 .WithQueryParams(new Dictionary<string, string>() { { "api-version", "2" }, {"bicycleType", "1" } })
-                 .Start();
+                    .CreateHttpRequest(requests.FirstOrDefault())
+                    .WithQueryParams(
+                        new Dictionary<string, string>() { { "api-version", "2" }, { "bicycleType", "1" } })
+                    .Start();
 
                 var msg = await response.GetResponseJsonBody<List<Bicycle>>();
 
@@ -730,7 +737,7 @@ namespace QAToolKit.Engine.HttpTester.Test
                 Assert.True(response.IsSuccessStatusCode);
             }
         }
-        
+
         [Fact]
         public async Task HttpTesterClientPostObjectBodyWithBlankCertificateDefaultAuthorization_Success()
         {
@@ -742,6 +749,42 @@ namespace QAToolKit.Engine.HttpTester.Test
                     .WithMethod(HttpMethod.Post)
                     .WithCertificateAuthentication(new X509Certificate2())
                     .Start());
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterMultipleHeaders_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                client
+                    .CreateHttpRequest(new Uri("http://swagger-demo.qatoolkit.io/"), true)
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithMethod(HttpMethod.Get)
+                    .WithHeaders(new Dictionary<string, string>() { { "ApiKey", "1234" } })
+                    .WithPath("/api/bicycles/1");
+
+                client.WithHeaders(new Dictionary<string, string>() { { "Test", "1234" } });
+
+                Assert.True(client.GetRequestHeaders().Count == 2);
+            }
+        }
+
+        [Fact]
+        public async Task HttpTesterMultipleHeadersAlreadyExist_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                client
+                    .CreateHttpRequest(new Uri("http://swagger-demo.qatoolkit.io/"), true)
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithMethod(HttpMethod.Get)
+                    .WithHeaders(new Dictionary<string, string>() { { "ApiKey", "1234" } })
+                    .WithPath("/api/bicycles/1");
+
+                client.WithHeaders(new Dictionary<string, string>() { { "ApiKey", "1234" } });
+
+                Assert.True(client.GetRequestHeaders().Count == 1);
             }
         }
     }
