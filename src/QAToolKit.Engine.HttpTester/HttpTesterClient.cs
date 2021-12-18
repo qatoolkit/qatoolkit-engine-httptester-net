@@ -168,8 +168,26 @@ namespace QAToolKit.Engine.HttpTester
         /// <returns></returns>
         public IHttpTesterClient WithHeaders(Dictionary<string, string> headers)
         {
-            _headers = headers ?? throw new ArgumentException($"{nameof(headers)} is null.");
-
+            if (headers == null)
+            {
+                throw new ArgumentException($"{nameof(headers)} is null.");
+            }
+            
+            if (_headers == null || _headers.Count == 0)
+            {
+                _headers = headers;
+            }
+            else
+            {
+                foreach (var header in headers)
+                {
+                    if (!_headers.ContainsKey(header.Key))
+                    {
+                        _headers.Add(header.Key, header.Value);                        
+                    }
+                }
+            }
+            
             return this;
         }
 
@@ -425,6 +443,16 @@ namespace QAToolKit.Engine.HttpTester
             Duration = sw.ElapsedMilliseconds;
 
             return _responseMessage;
+        }
+
+        public Dictionary<string, string> GetRequestHeaders()
+        {
+            return _headers;
+        }
+        
+        public Dictionary<string, string> GetQueryParameters()
+        {
+            return _queryParameters;
         }
 
         /// <summary>
