@@ -787,5 +787,69 @@ namespace QAToolKit.Engine.HttpTester.Test
                 Assert.True(client.GetRequestHeaders().Count == 1);
             }
         }
+        
+        [Fact]
+        public async Task HttpAgentHeaders_Success()
+        {
+            using (var client = new HttpTesterClient())
+            {
+                client
+                    .CreateHttpRequest(new Uri("http://swagger-demo.qatoolkit.io/"), true)
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithMethod(HttpMethod.Get)
+                    .WithHttpAgent("testapp", "1.0", "https://myapp.com")
+                    .WithPath("/api/bicycles/1");
+
+                Assert.True(client.HttpClient.DefaultRequestHeaders.Count() == 1);
+            }
+        }
+        
+        [Theory]
+        [InlineData("")]
+        public async Task HttpAgentHeadersNameNull_Fails(string name)
+        {
+            using (var client = new HttpTesterClient())
+            {
+                client
+                    .CreateHttpRequest(new Uri("http://swagger-demo.qatoolkit.io/"), true)
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithMethod(HttpMethod.Get)
+                    .WithPath("/api/bicycles/1");
+
+                Assert.Throws<ArgumentNullException>(() => client.WithHttpAgent(name, "1.0", "https://myapp.com"));
+            }
+        }
+        
+        [Theory]
+        [InlineData("")]
+        public async Task HttpAgentHeadersVersionNull_Fails(string version)
+        {
+            using (var client = new HttpTesterClient())
+            {
+                client
+                    .CreateHttpRequest(new Uri("http://swagger-demo.qatoolkit.io/"), true)
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithMethod(HttpMethod.Get)
+                    .WithPath("/api/bicycles/1");
+
+                Assert.Throws<ArgumentNullException>(() => client.WithHttpAgent("testapp", version, "https://myapp.com"));
+            }
+        }
+        
+        [Theory]
+        [InlineData("")]
+        public async Task HttpAgentHeadersUrlNull_Fails(string url)
+        {
+            using (var client = new HttpTesterClient())
+            {
+                client
+                    .CreateHttpRequest(new Uri("http://swagger-demo.qatoolkit.io/"), true)
+                    .WithQueryParams(new Dictionary<string, string>() { { "api-version", "1" } })
+                    .WithMethod(HttpMethod.Get)
+                    .WithPath("/api/bicycles/1");
+
+                Assert.Throws<ArgumentNullException>(() => client.WithHttpAgent("testapp", "1.0", url));
+            }
+        }
     }
 }

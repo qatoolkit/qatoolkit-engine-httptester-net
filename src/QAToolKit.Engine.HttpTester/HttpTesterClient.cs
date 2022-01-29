@@ -385,6 +385,35 @@ namespace QAToolKit.Engine.HttpTester
         }
 
         /// <summary>
+        /// Specify the HTTP client agent data. It's useful for serverside to identify your HTTP calls.
+        /// </summary>
+        /// <param name="productName"></param>
+        /// <param name="productVersion"></param>
+        /// <param name="productUrl"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="QAToolKitEngineHttpTesterException"></exception>
+        public IHttpTesterClient WithHttpAgent(string productName, string productVersion, string productUrl)
+        {
+            if (string.IsNullOrEmpty(productName))
+                throw new ArgumentNullException($"{nameof(productName)} is null.");
+            if (string.IsNullOrEmpty(productVersion))
+                throw new ArgumentNullException($"{nameof(productVersion)} is null.");
+            if (string.IsNullOrEmpty(productUrl))
+                throw new ArgumentNullException($"{nameof(productUrl)} is null.");
+            if (HttpClient == null)
+                throw new QAToolKitEngineHttpTesterException("HttpClient is not instantiated. Create new 'HttpTesterClient'.");
+            
+            var productValue = new ProductInfoHeaderValue(productName, productVersion);
+            var commentValue = new ProductInfoHeaderValue($"(+{productUrl})");
+
+            HttpClient.DefaultRequestHeaders.UserAgent.Add(productValue);
+            HttpClient.DefaultRequestHeaders.UserAgent.Add(commentValue);
+
+            return this;
+        }
+
+        /// <summary>
         /// Start the HTTP request
         /// </summary>
         /// <returns></returns>
