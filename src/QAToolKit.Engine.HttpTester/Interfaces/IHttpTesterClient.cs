@@ -109,6 +109,14 @@ namespace QAToolKit.Engine.HttpTester.Interfaces
         /// <returns></returns>
         IHttpTesterClient WithMultipart(string httpContentName, string value);
         /// <summary>
+        /// Specify the HTTP client agent data. It's useful for serverside to identify your HTTP calls.
+        /// </summary>
+        /// <param name="productName"></param>
+        /// <param name="productVersion"></param>
+        /// <param name="productUrl"></param>
+        /// <returns></returns>
+        IHttpTesterClient WithHttpAgent(string productName, string productVersion, string productUrl);
+        /// <summary>
         /// Start the HTTP request
         /// </summary>
         /// <returns></returns>
