@@ -8,7 +8,7 @@
 ## Description
 `QAToolKit.Engine.HttpTester` is a .NET Standard 2.1 library, that that contains an implementation of `IHttpTesterClient` that is a thin wrapper around .NET `HttpClient` to allow to write easy Http Request calls.
 
-Supported .NET frameworks and standards: `netstandard2.0`, `netstandard2.1`, `netcoreapp3.1`, `net5.0`
+Supported .NET frameworks and standards: `netstandard2.0`, `netstandard2.1`, `net7.0`
 
 Get in touch with me on:
 
@@ -287,7 +287,7 @@ using (var client = new HttpTesterClient())
 
 MIT License
 
-Copyright (c) 2020-2022 Miha Jakovac
+Copyright (c) 2020-2023 Miha Jakovac
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
