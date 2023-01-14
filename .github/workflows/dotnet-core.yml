@@ -16,18 +16,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup .NET Core 3.1
+    - name: Setup .NET Core 7.0
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '3.1.x'
-    - name: Setup .NET Core 5.0
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '5.0.x'
-    - name: Setup .NET Core 6.0
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '6.0.x'
+        dotnet-version: '7.0.x'
     - name: Clean
       run: dotnet clean --configuration Release && dotnet nuget locals all --clear
     - name: Install dependencies
@@ -50,14 +42,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Setup .NET Core 3.1
+    - name: Setup .NET Core 7.0
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '3.1.x'
-    - name: Setup .NET Core 6.0
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '6.0.x'
+        dotnet-version: '7.0.x'
     - name: Pack NuGet
       uses: brandedoutcast/publish-nuget@v2.5.5
       with:
